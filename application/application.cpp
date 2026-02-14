@@ -16,11 +16,11 @@ Application::Application()
 {
 
 }
+
 Application::~Application()
 {
 
 }
-
 
 bool Application::init(const int& width, const int& height)
 {
@@ -43,6 +43,10 @@ bool Application::init(const int& width, const int& height)
 		return false;
 	}
 
+	glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
+
+	glfwSetWindowUserPointer(_window, this);
+
 	return true;
 }
 
@@ -64,4 +68,14 @@ bool Application::destroy()
 	glfwTerminate();
 
 	return true;
+}
+
+void Application::framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+	std::cout << "re" << std::endl;
+	Application* self = (Application*)glfwGetWindowUserPointer(window);
+	if (self->_resize_callback != nullptr)
+	{
+		self->_resize_callback(width, height);
+	}
 }

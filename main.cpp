@@ -5,26 +5,22 @@
 #include"wrapper/check_error.h"
 #include"application/application.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)//设置窗口回调
-{
-    std::cout << "new window size:" << width << " " << height << std::endl;
-    glViewport(0, 0, width, height);
-}
-
-void key_call_back(GLFWwindow* window, int key, int scan_code, int action, int mods)//设置按键回调
-{
-    if (key == GLFW_KEY_W) {}//按下w
-    if (key == GLFW_PRESS) {}//按下按键
-    if (key == GLFW_RELEASE) {}//抬起按键
-    if (key == GLFW_MOD_CONTROL) {}//按下contral同时按下按键
-    if (key == GLFW_MOD_SHIFT) {}//按下shift同时按下按键
-
-    std::cout << "key:" << key << " " << scan_code<<" "<<action<< " " << mods << std::endl;
-}
-
+//void key_call_back(GLFWwindow* window, int key, int scan_code, int action, int mods)//设置按键回调
+//{
+//    if (key == GLFW_KEY_W) {}//按下w
+//    if (key == GLFW_PRESS) {}//按下按键
+//    if (key == GLFW_RELEASE) {}//抬起按键
+//    if (key == GLFW_MOD_CONTROL) {}//按下contral同时按下按键
+//    if (key == GLFW_MOD_SHIFT) {}//按下shift同时按下按键
+//
+//    std::cout << "key:" << key << " " << scan_code<<" "<<action<< " " << mods << std::endl;
+//}
+//
 void on_resize(int width, int height)
 {
-    GL_CALL(glViewport(0, 0, width, height))
+    glViewport(0, 0, width, height);
+    std::cout << "on_re" << std::endl;
+
 }
 
 int main()
@@ -32,6 +28,8 @@ int main()
 	std::cout << "OpenGL" << std::endl;
     if (!APP->init(800, 600))
         return -1;
+
+    APP->set_resize_callback(on_resize);
     //设置监听
     //glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);//监听窗口回调
     //glfwSetKeyCallback(window, key_call_back);
