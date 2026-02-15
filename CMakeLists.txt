@@ -6,8 +6,6 @@ project(OpenGL)
 #c++版本
 set(CMAKE_CXX_STANDARD 17)
 
-add_definitions(-DDEBUG)
-
 #加入include文件
 include_directories(
 	SYSTEM ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/include

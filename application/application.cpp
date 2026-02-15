@@ -12,15 +12,9 @@ Application* Application::instance()
 	return _instance;
 }
 
-Application::Application()
-{
+Application::Application() = default;
 
-}
-
-Application::~Application()
-{
-
-}
+Application::~Application() = default;
 
 bool Application::init(const int& width, const int& height)
 {
@@ -44,6 +38,7 @@ bool Application::init(const int& width, const int& height)
 	}
 
 	glfwSetFramebufferSizeCallback(_window, framebuffer_size_callback);
+	glfwSetKeyCallback(_window, key_callback);
 
 	glfwSetWindowUserPointer(_window, this);
 
@@ -77,5 +72,15 @@ void Application::framebuffer_size_callback(GLFWwindow* window, int width, int h
 	if (self->_resize_callback != nullptr)
 	{
 		self->_resize_callback(width, height);
+	}
+}
+
+void Application::key_callback(GLFWwindow* window, int key, int scan_code, int action, int mods)
+{
+	std::cout << "key" << std::endl;
+	Application* self = (Application*)glfwGetWindowUserPointer(window);
+	if (self->_key_callback != nullptr)
+	{
+		self->_key_callback(key,scan_code,action,mods);
 	}
 }
