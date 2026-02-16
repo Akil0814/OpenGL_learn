@@ -13,13 +13,13 @@ void on_resize(int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void prepare_single_buffer()
+void prepareVAO()
 {
-    float positions[] =
+    float position[] =
     {
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
+         0.0f,  0.5f, 0.0f,
     };
 
     float colors[] =
@@ -29,44 +29,61 @@ void prepare_single_buffer()
          0.0f,  0.0f, 1.0f
     };
 
-    //生成vbo
-    GLuint posVBO = 0, colorVBO = 0;
+    unsigned int indices[] =
+    {
+        0,1,2,
+        2,1,3
+    };
+
+    //创建VBO
+    GLuint posVBO = 0;
     glGenBuffers(1, &posVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(position), position, GL_STATIC_DRAW);
+
+    GLuint colorVBO = 0;
     glGenBuffers(1, &colorVBO);
-
-
-    //绑定当前vbo 到OpenGL状态机的当前vbo插槽上
-    //GL_ARRAY_BUFFER 表示当前vbo这个插槽
-    glBindBuffer(GL_ARRAY_BUFFER, posVBO); 
-    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);//向当前vbo传输数据 也是在开辟显存
-
     glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
 
-    GLuint VAO = 0;
+    //创建EBO
+    GLuint EBO = 0;
+    glGenBuffers(1, &EBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+    //创建VAO
     glGenVertexArrays(1, &VAO);
     glBindVertexArray(VAO);
 
-    //描述位置信息
-    glBindBuffer(GL_ARRAY_BUFFER, posVBO);//绑定VBO，下面属性描述才会与当前VBO相关
+    //绑定VBO EBO 加入属性描述
+    //加入位置属性描述
+    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
     glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+    //加入EBO到当前VAO
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 
     glBindVertexArray(0);
 
 }
 
-void prepare_interleaved_buffer()
+void prepare_buffer()
 {
     float vertices[] =
     {
-        -0.5f, -0.5f, 0.0f, 1.0f,  0.0f, 0.0f,
-         0.5f, -0.5f, 0.0f, 0.0f,  1.0f, 0.0f,
-         0.0f,  0.5f, 0.0f, 0.0f,  0.0f, 1.0f
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f,
+
+         0.5f,  0.5f, 0.0f,
+         0.8f,  0.8f, 0.0f,
+         0.8f,  0.0f, 0.0f
     };
 
     GLuint VBO = 0;
@@ -82,31 +99,32 @@ void prepare_interleaved_buffer()
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3*sizeof(float)));
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
     glBindVertexArray(0);
 }
 
-void prepare_shsder()
+void prepare_shader()
 {
     //1 完成vs与fs的源代码，并且装入字符串
     const char* vertexShaderSource =
         "#version 460 core\n"
         "layout (location = 0) in vec3 aPos;\n"
+        "layout (location = 1) in vec3 aColor;\n"
+        "out vec3 color;\n"
         "void main()\n"
         "{\n"
         " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
+        "color=aColor;\n"
         "}\n\0";
 
     const char* fragmentShaderSource =
         "#version 460 core\n"
         "out vec4 FragColor;\n"
+        "in vec3 color;\n"
         "void main()\n"
         "{\n"
-        " FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+        " FragColor = vec4(color, 1.0f);\n"
         "}\n\0";
     //---------------编译-----------------
 
@@ -167,14 +185,23 @@ void render()
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 
     //绑定program
-    glUseProgram(program);
+    GL_CALL(glUseProgram(program));
     //绑定vao
-    glBindVertexArray(VAO);
+    GL_CALL(glBindVertexArray(VAO));
+
+    GL_CALL(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0));
+
     //发出绘制指令
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    //三角形：
+    //GL_CALL(glDrawArrays(GL_TRIANGLES, 0, 6));
+    //GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 6));
+    //GL_CALL(glDrawArrays(GL_TRIANGLE_FAN, 0, 6));
+
+    //直线：
+    //GL_CALL(glDrawArrays(GL_LINES, 0, 6));
+    //GL_CALL(glDrawArrays(GL_LINE_STRIP, 0, 6));
 
 }
-
 
 int main()
 {
@@ -182,11 +209,13 @@ int main()
     if (!APP->init(800, 600))
         return -1;
 
-    prepare_shsder();
-    prepare_interleaved_buffer();
+    prepare_shader();
+    //prepare_buffer();
+    prepareVAO();
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     APP->set_resize_callback(on_resize);
+
     while (APP->update())
     {
         render();
@@ -195,4 +224,52 @@ int main()
     APP->destroy();
 
 	return 0;
+}
+
+
+void prepare_single_buffer()
+{
+    float positions[] =
+    {
+        -0.5f, -0.5f, 0.0f,
+         0.5f, -0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f
+    };
+
+    float colors[] =
+    {
+         1.0f,  0.0f, 0.0f,
+         0.0f,  1.0f, 0.0f,
+         0.0f,  0.0f, 1.0f
+    };
+
+    //生成vbo
+    GLuint posVBO = 0, colorVBO = 0;
+    glGenBuffers(1, &posVBO);
+    glGenBuffers(1, &colorVBO);
+
+
+    //绑定当前vbo 到OpenGL状态机的当前vbo插槽上
+    //GL_ARRAY_BUFFER 表示当前vbo这个插槽
+    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);//向当前vbo传输数据 也是在开辟显存
+
+    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
+
+    GLuint VAO = 0;
+    glGenVertexArrays(1, &VAO);
+    glBindVertexArray(VAO);
+
+    //描述位置信息
+    glBindBuffer(GL_ARRAY_BUFFER, posVBO);//绑定VBO，下面属性描述才会与当前VBO相关
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+    glBindVertexArray(0);
+
 }
