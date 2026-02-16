@@ -4,6 +4,7 @@
 
 #include"wrapper/check_error.h"
 #include"application/application.h"
+#include"GLframework/shader.h"
 
 GLuint VAO, program;
 

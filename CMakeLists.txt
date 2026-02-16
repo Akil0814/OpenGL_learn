@@ -19,10 +19,10 @@ link_directories(
 file(GLOB ASSETS "./assets")
 file(COPY ${ASSETS} DESTINATION ${CMAKE_BINARY_DIR})
 
-#将funcs文件夹纳入编译
+#将文件夹纳入编译
 add_subdirectory(wrapper)
 add_subdirectory(application)
-
+add_subdirectory(GLframework)
 
 #搜索所有的cpp， 加入SRCS变量中
 #aux_source_directory(. SRCS)
@@ -31,4 +31,4 @@ add_subdirectory(application)
 add_executable(OpenGL_study "main.cpp" "glad.c")
 
 #将funcs.lib链接入softRender
-target_link_libraries(OpenGL_study glfw3.lib wrapper app)
+target_link_libraries(OpenGL_study glfw3.lib wrapper app fw)
