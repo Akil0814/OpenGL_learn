@@ -5,8 +5,11 @@
 class Shader
 {
 public:
+	Shader();
+	~Shader();
 
 
 private:
+	GLuint _program = { 0 };
 
 };
