@@ -6,7 +6,9 @@
 #include"application/application.h"
 #include"GLframework/shader.h"
 
-GLuint VAO, program;
+GLuint VAO;
+
+Shader* shader = nullptr;
 
 void on_resize(int width, int height)
 {
@@ -107,78 +109,7 @@ void prepare_buffer()
 
 void prepare_shader()
 {
-    //1 完成vs与fs的源代码，并且装入字符串
-    const char* vertexShaderSource =
-        "#version 460 core\n"
-        "layout (location = 0) in vec3 aPos;\n"
-        "layout (location = 1) in vec3 aColor;\n"
-        "out vec3 color;\n"
-        "void main()\n"
-        "{\n"
-        " gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-        "color=aColor;\n"
-        "}\n\0";
-
-    const char* fragmentShaderSource =
-        "#version 460 core\n"
-        "out vec4 FragColor;\n"
-        "in vec3 color;\n"
-        "void main()\n"
-        "{\n"
-        " FragColor = vec4(color, 1.0f);\n"
-        "}\n\0";
-    //---------------编译-----------------
-
-
-    //2 创建 Shader 程序（vs、fs）
-    GLuint vertex, fragment;
-    vertex = glCreateShader(GL_VERTEX_SHADER);
-    fragment = glCreateShader(GL_FRAGMENT_SHADER);
-
-    //3 为 shader 程序输入 shader 代码
-    glShaderSource(vertex, 1, &vertexShaderSource, NULL);
-    glShaderSource(fragment, 1, &fragmentShaderSource, NULL);
-
-    int success = 0;
-    char infoLog[1024];//该字符串用来承接错误与否并输出
-
-    glCompileShader(vertex);//编译shader
-    glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);// 检查 vertex 编译结果，并把结果放在success里面
-    if (!success)
-    {
-        glGetShaderInfoLog(vertex, 1024, NULL, infoLog);
-        std::cout << "Error: SHADER COMPILE ERROR --VERTEX" << "\n" << infoLog << std::endl;
-    }
-
-    glCompileShader(fragment);
-    glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragment, 1024, NULL, infoLog);
-        std::cout << "Error: SHADER COMPILE ERROR --FRAGMENT" << "\n" << infoLog << std::endl;
-    }
-
-    //---------------链接-----------------
-    //5 创建一个Program壳子
-    program = 0;
-    program = glCreateProgram();
-
-    //6 将vs与fs编译好的结果放到program这个壳子里
-    glAttachShader(program, vertex);
-    glAttachShader(program, fragment);
-    //7 执行program的链接操作，形成最终可执行shader程序
-    glLinkProgram(program);
-    //检查链接错误
-    glGetProgramiv(program, GL_LINK_STATUS, &success);
-    if (!success)
-    {
-        glGetProgramInfoLog(program, 1024, NULL, infoLog);
-        std::cout << "Error: SHADER LINK ERROR " << "\n" << infoLog << std::endl;
-    }
-
-    //shader链接完之后要清理,最终想拿到的是program
-    glDeleteShader(vertex);
-    glDeleteShader(fragment);
+    shader = new Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
 }
 
 void render()
@@ -186,7 +117,7 @@ void render()
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 
     //绑定program
-    GL_CALL(glUseProgram(program));
+    shader->begin();
     //绑定vao
     GL_CALL(glBindVertexArray(VAO));
 
@@ -200,8 +131,10 @@ void render()
 
     //直线：
     //GL_CALL(glDrawArrays(GL_LINES, 0, 6));
-    //GL_CALL(glDrawArrays(GL_LINE_STRIP, 0, 6));
+    //GL_CALL(glDrawArrays(GL_LINE_STRIP, 0, 6));\
 
+    glBindVertexArray(0);
+    shader->end();
 }
 
 int main()
