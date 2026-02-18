@@ -94,6 +94,16 @@ void Shader::end()
 	GL_CALL(glUseProgram(0));
 }
 
+void Shader::set_float(const std::string& name, float value)
+{
+    //1 通过名称拿到Uniform变量的Location
+    GLint location = glGetUniformLocation(_program, name.c_str());
+
+    //通过Location更新Uniform变量
+    GL_CALL(glUniform1f(location,value));
+}
+
+
 void Shader::check_shader_errors(GLuint target, Type type)
 {
     int success = 0;

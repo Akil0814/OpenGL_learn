@@ -76,7 +76,6 @@ void prepareVAO()
 
 }
 
-
 void prepare_shader()
 {
     shader = new Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
@@ -88,6 +87,9 @@ void render()
 
     //°ó¶¨program
     shader->begin();
+
+    shader->set_float("time", glfwGetTime());
+
     //°ó¶¨vao
     GL_CALL(glBindVertexArray(VAO));
 

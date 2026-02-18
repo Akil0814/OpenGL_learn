@@ -28,6 +28,8 @@ public:
 
 	void end();//结束使用当前shader
 
+	void set_float(const std::string& name, float value);
+
 private:
 	void check_shader_errors(GLuint target, Type type);
 
