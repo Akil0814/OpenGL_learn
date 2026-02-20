@@ -89,6 +89,7 @@ void render()
     shader->begin();
 
     shader->set_float("time", glfwGetTime());
+    shader->set_float("speed", 5.0);
 
     //°ó¶¨vao
     GL_CALL(glBindVertexArray(VAO));
