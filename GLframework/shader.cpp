@@ -103,6 +103,23 @@ void Shader::set_float(const std::string& name, float value)
     GL_CALL(glUniform1f(location,value));
 }
 
+void Shader::set_vect3(const std::string& name, float x, float y, float z)
+{
+    //1 通过名称拿到Uniform变量的Location
+    GLint location = glGetUniformLocation(_program, name.c_str());
+
+    GL_CALL(glUniform3f(location,x,y,z));
+}
+
+void Shader::set_vect3(const std::string& name, const float* values_3)
+{
+    //1 通过名称拿到Uniform变量的Location
+    GLint location = glGetUniformLocation(_program, name.c_str());
+
+    //第二个参数：你当前要更新的uniform变量如果是数组，数组里包括多少个向量vec3
+    GL_CALL(glUniform3fv(location, 1, values_3));
+}
+
 
 void Shader::check_shader_errors(GLuint target, Type type)
 {
@@ -143,3 +160,4 @@ void Shader::check_shader_errors(GLuint target, Type type)
     }
 
 }
+
