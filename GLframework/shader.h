@@ -30,9 +30,10 @@ public:
 
 	void set_float(const std::string& name, float value);
 
-	void set_vect3(const std::string& name, float x, float y, float z);
-	void set_vect3(const std::string& name, const float* values_3);
+	void set_vector3(const std::string& name, float x, float y, float z);
+	void set_vector3(const std::string& name, const float* values_3);
 
+	void set_int(const std::string& name, int value);
 
 private:
 	void check_shader_errors(GLuint target, Type type);
