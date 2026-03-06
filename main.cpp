@@ -20,7 +20,7 @@ void on_resize(int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void prepare_taxture()
+void prepare_texture()
 {
     //1 用stbImage读图片
     int width, height, channels;
@@ -29,6 +29,12 @@ void prepare_taxture()
     stbi_set_flip_vertically_on_load(true);
 
     unsigned char* data = stbi_load("assets/textures/Arcueid.png", &width, &height, &channels, STBI_rgb_alpha);
+
+    if (!data)
+    {
+        std::cout << "failed to load texture\n";
+        return;
+    }
 
     //2 生成纹理并激活单元绑定
     glGenTextures(1, &texture);
@@ -60,22 +66,25 @@ void prepareVAO()
     {
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f,
+         0.5f,  0.5f, 0.0f,
     };
 
     float colors[] =
     {
          1.0f,  0.0f, 0.0f,
          0.0f,  1.0f, 0.0f,
-         0.0f,  0.0f, 1.0f
+         0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f, 0.5f,
     };
 
 
     float uvs[] =
     {
         0.0f, 0.0f,
-        1.0f, 0.0f,
-        0.5f, 1.0f,
+        2.0f, 0.0f,
+        0.0f, 1.0f,
+        2.0f, 1.0f,
     };
 
     unsigned int indices[] =
@@ -150,12 +159,12 @@ void render()
     shader->set_int("sampler",0);
 
     shader->set_float("time", glfwGetTime());
-    shader->set_float("speed", 0.0);
+    shader->set_float("speed", 0.5);
 
     //绑定vao
     GL_CALL(glBindVertexArray(VAO));
 
-    GL_CALL(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0));
+    GL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0));
 
     //发出绘制指令
     //三角形：
@@ -180,7 +189,7 @@ int main()
     prepare_shader();
     //prepare_buffer();
     prepareVAO();
-    prepare_taxture();
+    prepare_texture();
 
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
