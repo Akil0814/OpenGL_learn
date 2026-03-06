@@ -9,7 +9,9 @@
 
 GLuint VAO;
 Shader* shader = nullptr;
-Texture* texture = nullptr;
+Texture* grass_texture = nullptr;
+Texture* land_texture = nullptr;
+Texture* noise_texture = nullptr;
 
 void on_resize(int width, int height)
 {
@@ -108,7 +110,9 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    texture = new Texture("assets/textures/1513_0234.png",0);
+    grass_texture = new Texture("assets/textures/grass.png",0);
+    land_texture = new Texture("assets/textures/land.png", 1);
+    noise_texture = new Texture("assets/textures/noise.png", 2);
 }
 
 void render()
@@ -118,7 +122,10 @@ void render()
     //°ó¶¨program
     shader->begin();
 
-    shader->set_int("sampler",0);
+    shader->set_int("grass_sampler",0);
+    shader->set_int("land_sampler", 1);
+    shader->set_int("noise_sampler", 2);
+
 
     shader->set_float("time", glfwGetTime());
     shader->set_float("speed", 0.5);
@@ -149,7 +156,6 @@ int main()
         return -1;
 
     prepare_shader();
-    //prepare_buffer();
     prepareVAO();
     prepare_texture();
 
@@ -163,7 +169,6 @@ int main()
     }
 
     APP->destroy();
-    delete texture;
 
 	return 0;
 }
