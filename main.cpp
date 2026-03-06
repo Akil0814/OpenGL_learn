@@ -5,59 +5,16 @@
 #include"wrapper/check_error.h"
 #include"application/application.h"
 #include"GLframework/shader.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include"thirdparty/stb_image.h"
+#include"GLframework/texture.h"
 
 GLuint VAO;
-GLuint texture;
-
 Shader* shader = nullptr;
+Texture* texture = nullptr;
 
 void on_resize(int width, int height)
 {
     std::cout << "new window size:" << width << " " << height << std::endl;
     glViewport(0, 0, width, height);
-}
-
-void prepare_texture()
-{
-    //1 用stbImage读图片
-    int width, height, channels;
-
-    //翻转y轴
-    stbi_set_flip_vertically_on_load(true);
-
-    unsigned char* data = stbi_load("assets/textures/Arcueid.png", &width, &height, &channels, STBI_rgb_alpha);
-
-    if (!data)
-    {
-        std::cout << "failed to load texture\n";
-        return;
-    }
-
-    //2 生成纹理并激活单元绑定
-    glGenTextures(1, &texture);
-    //激活纹理单元
-    glActiveTexture(GL_TEXTURE0);
-    //绑定纹理对象
-    glBindTexture(GL_TEXTURE_2D, texture);
-
-    //3 传输纹理数据,开辟显存
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-
-    //释放数据
-    stbi_image_free(data);
-
-    //设置纹理的过滤方式
-    //当需要的像素 > 图片的像素 Linear
-    //当需要的像素 < 图片像素 Nearest
-    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    //设置纹理包裹方式
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);//u方向
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);//v方向
 }
 
 void prepareVAO()
@@ -149,6 +106,11 @@ void prepare_shader()
     shader = new Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
 }
 
+void prepare_texture()
+{
+    texture = new Texture("assets/textures/1513_0234.png",0);
+}
+
 void render()
 {
     GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
@@ -201,6 +163,7 @@ int main()
     }
 
     APP->destroy();
+    delete texture;
 
 	return 0;
 }
