@@ -1,11 +1,15 @@
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
-#include<iostream>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+#include <iostream>
 
-#include"wrapper/check_error.h"
-#include"application/application.h"
-#include"GLframework/shader.h"
-#include"GLframework/texture.h"
+#include "wrapper/check_error.h"
+#include "application/application.h"
+#include "GLframework/shader.h"
+#include "GLframework/texture.h"
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 GLuint VAO;
 Shader* shader = nullptr;
@@ -121,6 +125,7 @@ void render()
 
     //°ó¶¨program
     shader->begin();
+    shader->set_float("time",glfwGetTime());
 
     shader->set_int("grass_sampler",0);
     shader->set_int("land_sampler", 1);
