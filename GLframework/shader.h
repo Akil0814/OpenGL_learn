@@ -24,9 +24,9 @@ public:
 	Shader(const char* vertex_path, const char* fragment_path);
 	~Shader();
 
-	void begin();//开始使用当前Shader
+	void begin();//寮�濮嬩娇鐢ㄥ綋鍓峉hader
 
-	void end();//结束使用当前shader
+	void end();//缁撴潫浣跨敤褰撳墠shader
 
 	void set_float(const std::string& name, float value);
 

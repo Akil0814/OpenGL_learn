@@ -10,7 +10,8 @@ uniform float time;
 
 void main()
 {
-	float scale =1.0/time;
+	float safeTime = max(time, 0.01);
+	float scale = 1.0 / safeTime;
 
 	vec3 sPos=aPos* scale;
 

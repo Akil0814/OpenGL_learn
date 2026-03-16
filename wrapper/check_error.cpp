@@ -11,7 +11,7 @@ static const char* GLErrorToString(GLenum e)
     case GL_INVALID_OPERATION: return "GL_INVALID_OPERATION";
     case GL_INVALID_FRAMEBUFFER_OPERATION: return "GL_INVALID_FRAMEBUFFER_OPERATION";
     case GL_OUT_OF_MEMORY: return "GL_OUT_OF_MEMORY";
-        // GL_STACK_UNDERFLOW/OVERFLOW тз core profile юО©идэц╩акё╛╣╚спп╘й╣ож╩╧╩А╠╗
+        // GL_STACK_UNDERFLOW/OVERFLOW Е°╗ core profile И┤▄Е▐╞Х┐╫Ф╡║Д╨├О╪▄Д╫├Ф°┴Д╨⌡Е╝·Г▌╟Х©≤Д╪ Ф┼╔
 #ifdef GL_STACK_UNDERFLOW
     case GL_STACK_UNDERFLOW: return "GL_STACK_UNDERFLOW";
 #endif

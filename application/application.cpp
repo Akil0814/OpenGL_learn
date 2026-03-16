@@ -21,15 +21,15 @@ bool Application::init(const int& width, const int& height)
 	_width = width;
 	_height = height;
 	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);//主版本号
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);//次版本号
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//使用核心模式
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);//涓荤増鏈彿
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);//娆＄増鏈彿
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//浣跨敤鏍稿績妯″紡
 
-	_window = glfwCreateWindow(_width, _height, "LearnOpenGL", nullptr, nullptr);//窗体对象
+	_window = glfwCreateWindow(_width, _height, "LearnOpenGL", nullptr, nullptr);//绐椾綋瀵硅薄
 	if (_window == NULL)
 		return false;
 
-	glfwMakeContextCurrent(_window);//设置绘制对象
+	glfwMakeContextCurrent(_window);//璁剧疆缁樺埗瀵硅薄
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
