@@ -10,7 +10,7 @@ uniform float time;
 
 void main()
 {
-	float scale = 1.0 + 0.1 * sin(time);
+	float scale = 1.0/time;
 	vec3 sPos = aPos * scale;
 	gl_Position = vec4(sPos, 1.0);
 	color=aColor;

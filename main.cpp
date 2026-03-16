@@ -56,8 +56,6 @@ void prepareVAO()
         2,1,3
     };
 
-
-
     //创建VBO
     GLuint posVBO = 0;
     glGenBuffers(1, &posVBO);
@@ -114,9 +112,7 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    grass_texture = new Texture("assets/textures/grass.png",0);
-    land_texture = new Texture("assets/textures/land.png", 1);
-    noise_texture = new Texture("assets/textures/noise.png", 2);
+    grass_texture = new Texture("assets/textures/Arcueid.png",0);
 }
 
 void render()
@@ -125,20 +121,9 @@ void render()
 
     //绑定program
     shader->begin();
-    shader->set_float("time",glfwGetTime());
-
-    shader->set_int("grass_sampler",0);
-    shader->set_int("land_sampler", 1);
-    shader->set_int("noise_sampler", 2);
-
-
+    shader->set_int("sampler",0);
     shader->set_float("time", glfwGetTime());
     shader->set_float("speed", 0.5);
-
-    // Keep texture units explicitly bound for this draw call.
-    grass_texture->bind();
-    land_texture->bind();
-    noise_texture->bind();
 
     //绑定vao
     GL_CALL(glBindVertexArray(VAO));
@@ -230,5 +215,4 @@ void prepare_single_buffer()
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 
     glBindVertexArray(0);
-
 }
