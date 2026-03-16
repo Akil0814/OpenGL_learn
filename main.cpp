@@ -118,6 +118,7 @@ void prepare_texture()
     texture = new Texture("assets/textures/Arcueid_morning.png",0);
 }
 
+//旋转变换
 void do_rotation_transform()
 {
     //构建一个选择矩阵，绕着z轴旋转45°
@@ -127,16 +128,19 @@ void do_rotation_transform()
 
 }
 
+//平移变换
 void do_translation_transform()
 {
     transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
 }
 
+//缩放变换
 void do_scale_transform()
 {
     transform = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 1.0f));
 }
 
+//复合变换
 void do_transform()
 {
     glm::mat4 rotate_mat = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0, 0.0, 1.0));
@@ -187,9 +191,9 @@ int main()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     APP->set_resize_callback(on_resize);
 
-    do_transform();
     while (true)
     {
+        do_rotation_transform();
         render();
         if (!APP->update())
             break;
