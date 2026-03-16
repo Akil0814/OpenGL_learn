@@ -29,8 +29,9 @@ void prepareVAO()
     {
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
-        -0.5f,  0.5f, 0.0f,
-         0.5f,  0.5f, 0.0f,
+         0.0f,  0.5f, 0.0f,//中点三角形
+        //-0.5f,  0.5f, 0.0f,
+         //0.5f,  0.5f, 0.0f,
     };
 
     float colors[] =
@@ -38,22 +39,23 @@ void prepareVAO()
          1.0f,  0.0f, 0.0f,
          0.0f,  1.0f, 0.0f,
          0.0f,  0.0f, 1.0f,
-         0.5f,  0.5f, 0.5f,
+         //0.5f,  0.5f, 0.5f,
     };
 
 
     float uvs[] =
     {
         0.0f, 0.0f,
-        2.0f, 0.0f,
-        0.0f, 1.0f,
-        2.0f, 1.0f,
+        1.0f, 0.0f,
+        0.5f, 1.0f,
+        //0.0f, 1.0f,
+        //2.0f, 1.0f,
     };
 
     unsigned int indices[] =
     {
         0,1,2,
-        2,1,3
+        //2,1,3
     };
 
     //创建VBO
@@ -112,7 +114,7 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    grass_texture = new Texture("assets/textures/Arcueid.png",0);
+    grass_texture = new Texture("assets/textures/Arcueid_morning.png",0);
 }
 
 void render()
@@ -122,8 +124,6 @@ void render()
     //绑定program
     shader->begin();
     shader->set_int("sampler",0);
-    shader->set_float("time", glfwGetTime());
-    shader->set_float("speed", 0.5);
 
     //绑定vao
     GL_CALL(glBindVertexArray(VAO));
