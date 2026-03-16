@@ -135,6 +135,11 @@ void render()
     shader->set_float("time", glfwGetTime());
     shader->set_float("speed", 0.5);
 
+    // Keep texture units explicitly bound for this draw call.
+    grass_texture->bind();
+    land_texture->bind();
+    noise_texture->bind();
+
     //绑定vao
     GL_CALL(glBindVertexArray(VAO));
 
@@ -168,9 +173,11 @@ int main()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     APP->set_resize_callback(on_resize);
 
-    while (APP->update())
+    while (true)
     {
         render();
+        if (!APP->update())
+            break;
     }
 
     APP->destroy();

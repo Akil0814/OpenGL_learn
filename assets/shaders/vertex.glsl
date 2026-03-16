@@ -10,11 +10,8 @@ uniform float time;
 
 void main()
 {
-	float safeTime = max(time, 0.01);
-	float scale = 1.0 / safeTime;
-
-	vec3 sPos=aPos* scale;
-
+	float scale = 1.0 + 0.1 * sin(time);
+	vec3 sPos = aPos * scale;
 	gl_Position = vec4(sPos, 1.0);
 	color=aColor;
 	uv=aUV;
