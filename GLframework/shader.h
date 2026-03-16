@@ -2,12 +2,19 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 
-#include"../wrapper/check_error.h"
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
 #include<string>
 #include<fstream>
 #include<sstream>
 #include<iostream>
+
+#include"../wrapper/check_error.h"
+
 
 class Shader
 {
@@ -34,6 +41,8 @@ public:
 	void set_vector3(const std::string& name, const float* values_3);
 
 	void set_int(const std::string& name, int value);
+
+	void set_matrix_4b4(const std::string& name,glm::mat4 value);
 
 private:
 	void check_shader_errors(GLuint target, Type type);

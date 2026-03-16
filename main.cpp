@@ -10,12 +10,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/string_cast.hpp>
 
 GLuint VAO;
 Shader* shader = nullptr;
-Texture* grass_texture = nullptr;
-Texture* land_texture = nullptr;
-Texture* noise_texture = nullptr;
+Texture* texture = nullptr;
+glm::mat4 transform(1.0);
 
 void on_resize(int width, int height)
 {
@@ -114,7 +115,34 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    grass_texture = new Texture("assets/textures/Arcueid_morning.png",0);
+    texture = new Texture("assets/textures/Arcueid_morning.png",0);
+}
+
+void do_rotation_transform()
+{
+    //构建一个选择矩阵，绕着z轴旋转45°
+    //rotate函数：用于生成旋转矩阵
+    //transform = glm::rotate(glm::mat4(1.0f), glm::radians(0.1f), glm::vec3(0.0, 0.0, 1.0));
+    transform = glm::rotate(transform, glm::radians(0.1f), glm::vec3(0.0, 0.0, 1.0));
+
+}
+
+void do_translation_transform()
+{
+    transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
+}
+
+void do_scale_transform()
+{
+    transform = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 1.0f));
+}
+
+void do_transform()
+{
+    glm::mat4 rotate_mat = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0, 0.0, 1.0));
+    glm::mat4 translate_mat = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
+    transform = translate_mat * rotate_mat;
+    //transform = rotate_mat * translate_mat;
 }
 
 void render()
@@ -124,11 +152,12 @@ void render()
     //绑定program
     shader->begin();
     shader->set_int("sampler",0);
+    shader->set_matrix_4b4("transform", transform);
 
     //绑定vao
     GL_CALL(glBindVertexArray(VAO));
 
-    GL_CALL(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)0));
+    GL_CALL(glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, (void*)0));
 
     //发出绘制指令
     //三角形：
@@ -158,6 +187,7 @@ int main()
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
     APP->set_resize_callback(on_resize);
 
+    do_transform();
     while (true)
     {
         render();
@@ -169,7 +199,6 @@ int main()
 
 	return 0;
 }
-
 
 void prepare_single_buffer()
 {
