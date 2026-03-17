@@ -193,7 +193,6 @@ int main()
 
     while (true)
     {
-        do_rotation_transform();
         render();
         if (!APP->update())
             break;
