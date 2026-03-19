@@ -6,13 +6,18 @@ layout (location = 2) in vec2 aUV;
 out vec3 color;
 out vec2 uv;
 
-uniform float time;
+uniform mat4 transform;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
 
+
+
+//aPos作为attribute(属性)传入shader 原则上不允许更改
 void main()
 {
-	float scale = 1.0 + 0.1 * sin(time);
-	vec3 sPos = aPos * scale;
-	gl_Position = vec4(sPos, 1.0);
+	vec4 position = vec4(aPos, 1.0);
+	position = projectionMatrix* viewMatrix * transform * position;
+	gl_Position = position;
 	color=aColor;
 	uv=aUV;
 }
