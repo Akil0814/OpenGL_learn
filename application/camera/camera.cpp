@@ -22,3 +22,9 @@ glm::mat4 Camera::get_view_matrix()
 
 	return glm::lookAt(_position, center, _up);
 }
+
+glm::mat4 Camera::get_projection_matrix()
+{
+
+	return glm::mat4(1.0f);
+}

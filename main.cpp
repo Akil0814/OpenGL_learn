@@ -1,5 +1,3 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
 #include <iostream>
 
 #include "wrapper/check_error.h"
@@ -7,11 +5,9 @@
 #include "GLframework/shader.h"
 #include "GLframework/texture.h"
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/string_cast.hpp>
+#include "application/camera/perspective_camera.h"
+#include "application/camera/camera_control.h"
+
 
 GLuint VAO;
 Shader* shader = nullptr;
@@ -21,6 +17,8 @@ glm::mat4 view_matrix(1.0f);
 glm::mat4 ortho_matrix(1.0f);
 glm::mat4 perspective_matrix(1.0f);
 
+PerspectiveCamera* camera = nullptr;
+CameraControl* camera_control = nullptr;
 
 void on_resize(int width, int height)
 {
@@ -28,14 +26,21 @@ void on_resize(int width, int height)
     glViewport(0, 0, width, height);
 }
 
+void on_key(int key,int scan_code, int action, int mods)
+{
+    camera_control->on_key(key, action, mods);
+}
+
 void on_mouse(int button, int action, int mods)
 {
-    std::cout << "mouse" << button << " " << action << " " << mods << std::endl;
+    double x, y;
+    APP->get_cursor_position(&x, &y);
+    camera_control->on_mouse(button, action, x, y);
 }
 
 void on_motion(double x_pos, double y_pos)
 {
-    std::cout << "cursor" << x_pos << " " << y_pos << std::endl;
+    camera_control->on_cursor(x_pos, y_pos);
 }
 
 void prepareVAO()
@@ -141,6 +146,11 @@ void prepare_texture()
 
 void prepare_camera()
 {
+    camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
+
+    camera_control = new CameraControl();
+    camera_control->set_camera(camera);
+
     //lookAt:生成一个view matrix
     //eye:当前摄像机所在的位置
     //center:当前摄像机看向的那个点
@@ -209,9 +219,11 @@ int main()
     APP->set_resize_callback(on_resize);
     APP->set_mouse_callback(on_mouse);
     APP->set_cursor_callback(on_motion);
+    APP->set_key_callback(on_key);
 
     while (true)
     {
+        camera_control->on_update();
         render();
         if (!APP->update())
             break;

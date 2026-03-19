@@ -23,8 +23,8 @@ public:
 	bool destroy();
 
 	uint32_t get_width()const {return _width;}
-
 	uint32_t get_height()const {return _height;}
+	void get_cursor_position(double* x, double* y);
 
 	void set_resize_callback(ResizeCallback callback) { _resize_callback = callback; }
 	void set_key_callback(KeyCallback callback) { _key_callback = callback; }

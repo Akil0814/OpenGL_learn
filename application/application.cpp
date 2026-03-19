@@ -72,6 +72,12 @@ bool Application::destroy()
 	return true;
 }
 
+void Application::get_cursor_position(double* x, double* y)
+{
+	glfwGetCursorPos(_window, x, y);
+}
+
+
 void Application::framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	Application* self = (Application*)glfwGetWindowUserPointer(window);
