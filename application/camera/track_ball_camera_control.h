@@ -8,6 +8,7 @@ public:
 	~TrackBallCameraControl();
 
 	void on_cursor(double x_pos, double y_pos) override;
+	void on_scroll(float offset) override;
 
 
 private:

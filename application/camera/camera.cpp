@@ -28,3 +28,8 @@ glm::mat4 Camera::get_projection_matrix()
 
 	return glm::mat4(1.0f);
 }
+
+void Camera::scale(float delta_scale)
+{
+
+}

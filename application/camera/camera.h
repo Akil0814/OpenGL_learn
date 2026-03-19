@@ -7,6 +7,8 @@ public:
 	Camera();
 	~Camera();
 
+	virtual void scale(float delta_scale);
+
 	glm::mat4 get_view_matrix();
 	virtual glm::mat4 get_projection_matrix();
 

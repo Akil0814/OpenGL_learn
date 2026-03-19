@@ -50,6 +50,9 @@ bool Application::init(const int& width, const int& height)
 	//鼠标运动响应
 	glfwSetCursorPosCallback(_window, cursor_callback);
 
+	//鼠标滚轮响应
+	glfwSetScrollCallback(_window, scroll_callback);
+
 	return true;
 }
 
@@ -107,4 +110,12 @@ void Application::cursor_callback(GLFWwindow* window, double x_pos, double y_pos
 
 	if (self->_cursor_callback != nullptr)
 		self->_cursor_callback(x_pos, y_pos);
+}
+
+void Application::scroll_callback(GLFWwindow* window, double x_offset, double y_offset)
+{
+	Application* self = (Application*)glfwGetWindowUserPointer(window);
+
+	if (self->_scroll_callback != nullptr)
+		self->_scroll_callback(y_offset);
 }

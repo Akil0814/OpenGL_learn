@@ -13,11 +13,15 @@ public:
 	virtual void on_mouse(int button, int action, double x_pos, double y_pos);
 	virtual void on_cursor(double x_pos, double y_pos);
 	virtual void on_key(int key, int action, int mods);
+	virtual void on_scroll(float offset);
+
 
 	virtual void on_update();
 
 	void set_camera(Camera* camera) { _camera = camera; }
 	void set_sensitivity(float s) { _sensitivity = s; }
+	void set_scale_speed(float s) { _scale_speed = s; }
+
 
 protected:
 	//鼠标按键状态
@@ -37,5 +41,8 @@ protected:
 
 	//当前控制的摄像机
 	Camera* _camera = nullptr;
+
+	//记录相机缩放速度
+	float _scale_speed = { 0.2f };
 
 };

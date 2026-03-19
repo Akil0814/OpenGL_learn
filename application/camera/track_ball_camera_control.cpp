@@ -37,6 +37,11 @@ void TrackBallCameraControl::on_cursor(double x_pos, double y_pos)
 	_current_y = y_pos;
 }
 
+void TrackBallCameraControl::on_scroll(float offset)
+{
+	_camera->scale(_scale_speed*offset);
+}
+
 void TrackBallCameraControl::pitch(float angle)
 {
 	//ÈÆ×Å_rightÐý×ª

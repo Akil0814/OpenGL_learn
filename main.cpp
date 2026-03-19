@@ -6,6 +6,8 @@
 #include "GLframework/texture.h"
 
 #include "application/camera/perspective_camera.h"
+#include "application/camera/orthographic_camera.h"
+
 #include "application/camera/track_ball_camera_control.h"
 
 
@@ -15,6 +17,8 @@ Texture* texture = nullptr;
 glm::mat4 transform(1.0f);
 
 PerspectiveCamera* camera = nullptr;
+//OrthographicCamera* camera = nullptr;
+
 TrackBallCameraControl* camera_control = nullptr;
 
 void on_resize(int width, int height)
@@ -38,6 +42,11 @@ void on_mouse(int button, int action, int mods)
 void on_motion(double x_pos, double y_pos)
 {
     camera_control->on_cursor(x_pos, y_pos);
+}
+//
+void on_scroll(double offset)
+{
+    camera_control->on_scroll(offset);
 }
 
 void prepareVAO()
@@ -143,6 +152,7 @@ void prepare_texture()
 
 void prepare_camera()
 {
+    //camera = new OrthographicCamera(-5.0f, 5.0f, 5.0f, -5.0f, 5.0f, -5.0f);
     camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
 
     camera_control = new TrackBallCameraControl();
@@ -198,6 +208,7 @@ int main()
     APP->set_mouse_callback(on_mouse);
     APP->set_cursor_callback(on_motion);
     APP->set_key_callback(on_key);
+    APP->set_scroll_callback(on_scroll);
 
     while (true)
     {

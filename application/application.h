@@ -10,6 +10,7 @@ using ResizeCallback = void(*)(int width, int height);
 using KeyCallback = void(*)(int key, int scan_code, int action, int mods);
 using MouseCallback = void(*)(int button, int action, int mods);
 using CursorCallback = void(*)(double x_pos, double y_pos);
+using ScrollCallBack = void(*)(double offset);
 
 class Application
 {
@@ -30,12 +31,15 @@ public:
 	void set_key_callback(KeyCallback callback) { _key_callback = callback; }
 	void set_mouse_callback(MouseCallback callback) { _mouse_callback = callback; }
 	void set_cursor_callback(CursorCallback callback) { _cursor_callback = callback; }
+	void set_scroll_callback(ScrollCallBack callback) { _scroll_callback = callback; }
+
 
 private:
 	static void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 	static void key_callback(GLFWwindow* window, int key, int scan_code, int action, int mods);
 	static void mouse_callback(GLFWwindow* window, int button, int action, int mods);
 	static void cursor_callback(GLFWwindow* window, double x_pos, double y_pos);
+	static void scroll_callback(GLFWwindow* window, double x_offset, double y_offset);
 
 private:
 	Application();
@@ -54,5 +58,6 @@ private:
 	KeyCallback _key_callback = { nullptr };
 	MouseCallback _mouse_callback = { nullptr };
 	CursorCallback _cursor_callback = { nullptr };
+	ScrollCallBack _scroll_callback = { nullptr };
 
 };
