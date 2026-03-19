@@ -6,19 +6,16 @@
 #include "GLframework/texture.h"
 
 #include "application/camera/perspective_camera.h"
-#include "application/camera/camera_control.h"
+#include "application/camera/track_ball_camera_control.h"
 
 
 GLuint VAO;
 Shader* shader = nullptr;
 Texture* texture = nullptr;
 glm::mat4 transform(1.0f);
-glm::mat4 view_matrix(1.0f);
-glm::mat4 ortho_matrix(1.0f);
-glm::mat4 perspective_matrix(1.0f);
 
 PerspectiveCamera* camera = nullptr;
-CameraControl* camera_control = nullptr;
+TrackBallCameraControl* camera_control = nullptr;
 
 void on_resize(int width, int height)
 {
@@ -148,28 +145,10 @@ void prepare_camera()
 {
     camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
 
-    camera_control = new CameraControl();
+    camera_control = new TrackBallCameraControl();
     camera_control->set_camera(camera);
-
-    //lookAt:生成一个view matrix
-    //eye:当前摄像机所在的位置
-    //center:当前摄像机看向的那个点
-    //up:穹顶向量
-    view_matrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    
 }
 
-void prepare_ortho()
-{
-    //使用glm的other函数，生成了一个正交投影矩阵：生成一个投影盒子，将内部顶点转化到NDC坐标
-    ortho_matrix = glm::ortho(-2.0f, 2.0f, -2.0f, 2.0f, -2.0f,  2.0f);
-}
-
-void prepare_perspective()
-{
-    //fovy: y轴方向的视张角 aspect:近平面的横纵百分比 near: 近平面距离 far: 远平面距离 up:穹定向量
-    perspective_matrix = glm::perspective(glm::radians(60.0f), ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
-}
 
 void render()
 {
@@ -179,8 +158,8 @@ void render()
     shader->begin();
     shader->set_int("sampler",0);
     shader->set_matrix_4b4("transform", transform);
-    shader->set_matrix_4b4("viewMatrix", view_matrix);
-    shader->set_matrix_4b4("projectionMatrix", perspective_matrix);
+    shader->set_matrix_4b4("viewMatrix", camera->get_view_matrix());
+    shader->set_matrix_4b4("projectionMatrix", camera->get_projection_matrix());
 
 
     //绑定vao
@@ -212,7 +191,6 @@ int main()
     prepareVAO();
     prepare_texture();
     prepare_camera();
-    prepare_perspective();
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
