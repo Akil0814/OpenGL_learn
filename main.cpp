@@ -28,6 +28,16 @@ void on_resize(int width, int height)
     glViewport(0, 0, width, height);
 }
 
+void on_mouse(int button, int action, int mods)
+{
+    std::cout << "mouse" << button << " " << action << " " << mods << std::endl;
+}
+
+void on_motion(double x_pos, double y_pos)
+{
+    std::cout << "cursor" << x_pos << " " << y_pos << std::endl;
+}
+
 void prepareVAO()
 {
     //float position[] =
@@ -129,37 +139,6 @@ void prepare_texture()
     texture = new Texture("assets/textures/Arcueid_morning.png",0);
 }
 
-//旋转变换
-void do_rotation_transform()
-{
-    //构建一个选择矩阵，绕着z轴旋转45°
-    //rotate函数：用于生成旋转矩阵
-    //transform = glm::rotate(glm::mat4(1.0f), glm::radians(0.1f), glm::vec3(0.0, 0.0, 1.0));
-    transform = glm::rotate(transform, glm::radians(0.1f), glm::vec3(0.0f, 0.0f, 1.0f));
-
-}
-
-//平移变换
-void do_translation_transform()
-{
-    transform = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
-}
-
-//缩放变换
-void do_scale_transform()
-{
-    transform = glm::scale(glm::mat4(1.0f), glm::vec3(0.5f, 0.5f, 1.0f));
-}
-
-//复合变换
-void do_transform()
-{
-    glm::mat4 rotate_mat = glm::rotate(glm::mat4(1.0f), glm::radians(45.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    glm::mat4 translate_mat = glm::translate(glm::mat4(1.0f), glm::vec3(0.5f, 0.0f, 0.0f));
-    transform = translate_mat * rotate_mat;
-    //transform = rotate_mat * translate_mat;
-}
-
 void prepare_camera()
 {
     //lookAt:生成一个view matrix
@@ -207,7 +186,7 @@ void render()
 
     //直线：
     //GL_CALL(glDrawArrays(GL_LINES, 0, 6));
-    //GL_CALL(glDrawArrays(GL_LINE_STRIP, 0, 6));\
+    //GL_CALL(glDrawArrays(GL_LINE_STRIP, 0, 6));
 
     glBindVertexArray(0);
     shader->end();
@@ -226,7 +205,10 @@ int main()
     prepare_perspective();
 
     glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+
     APP->set_resize_callback(on_resize);
+    APP->set_mouse_callback(on_mouse);
+    APP->set_cursor_callback(on_motion);
 
     while (true)
     {
@@ -238,50 +220,4 @@ int main()
     APP->destroy();
 
 	return 0;
-}
-
-void prepare_single_buffer()
-{
-    float positions[] =
-    {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    };
-
-    float colors[] =
-    {
-         1.0f,  0.0f, 0.0f,
-         0.0f,  1.0f, 0.0f,
-         0.0f,  0.0f, 1.0f
-    };
-
-    //生成vbo
-    GLuint posVBO = 0, colorVBO = 0;
-    glGenBuffers(1, &posVBO);
-    glGenBuffers(1, &colorVBO);
-
-
-    //绑定当前vbo 到OpenGL状态机的当前vbo插槽上
-    //GL_ARRAY_BUFFER 表示当前vbo这个插槽
-    glBindBuffer(GL_ARRAY_BUFFER, posVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);//向当前vbo传输数据 也是在开辟显存
-
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(colors), colors, GL_STATIC_DRAW);
-
-    GLuint VAO = 0;
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-
-    //描述位置信息
-    glBindBuffer(GL_ARRAY_BUFFER, posVBO);//绑定VBO，下面属性描述才会与当前VBO相关
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, colorVBO);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-    glBindVertexArray(0);
 }
