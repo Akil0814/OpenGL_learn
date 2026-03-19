@@ -9,6 +9,8 @@
 #include "application/camera/orthographic_camera.h"
 
 #include "application/camera/track_ball_camera_control.h"
+#include "application/camera/game_camera_control.h"
+
 
 
 GLuint VAO;
@@ -19,7 +21,8 @@ glm::mat4 transform(1.0f);
 PerspectiveCamera* camera = nullptr;
 //OrthographicCamera* camera = nullptr;
 
-TrackBallCameraControl* camera_control = nullptr;
+GameCameraControl* camera_control = nullptr;
+//TrackBallCameraControl* camera_control = nullptr;
 
 void on_resize(int width, int height)
 {
@@ -155,7 +158,8 @@ void prepare_camera()
     //camera = new OrthographicCamera(-5.0f, 5.0f, 5.0f, -5.0f, 5.0f, -5.0f);
     camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
 
-    camera_control = new TrackBallCameraControl();
+    //camera_control = new TrackBallCameraControl();
+    camera_control = new GameCameraControl();
     camera_control->set_camera(camera);
 }
 
