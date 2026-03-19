@@ -8,13 +8,15 @@ out vec2 uv;
 
 uniform mat4 transform;
 uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
+
 
 
 //aPos作为attribute(属性)传入shader 原则上不允许更改
 void main()
 {
 	vec4 position = vec4(aPos, 1.0);
-	position = viewMatrix * transform * position;
+	position = projectionMatrix* viewMatrix * transform * position;
 	gl_Position = position;
 	color=aColor;
 	uv=aUV;
