@@ -4,11 +4,6 @@ TrackBallCameraControl::TrackBallCameraControl()
 {
 
 }
-TrackBallCameraControl::~TrackBallCameraControl()
-{
-
-}
-
 
 void TrackBallCameraControl::on_cursor(double x_pos, double y_pos)
 {
@@ -59,6 +54,4 @@ void TrackBallCameraControl::yaw(float angle)
 	_camera->_up = mat * glm::vec4(_camera->_up, 0.0f);
 	_camera->_right = mat * glm::vec4(_camera->_right, 0.0f);
 	_camera->_position = mat * glm::vec4(_camera->_position, 0.0f);
-
 }
-

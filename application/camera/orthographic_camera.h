@@ -5,8 +5,8 @@
 class OrthographicCamera :public Camera
 {
 public:
-	OrthographicCamera(float left, float right, float top, float bottom, float near, float far);
-	~OrthographicCamera();
+	OrthographicCamera(float left, float right, float top, float bottom, float near, float far, glm::vec3 position = { 0.0f,0.0f,3.0f });
+	~OrthographicCamera()=default;
 
 	glm::mat4 get_projection_matrix() override;
 
@@ -21,5 +21,4 @@ private:
 	float _far = { 0.0f };
 
 	float _scale = { 0.0f };
-
 };

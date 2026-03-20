@@ -1,14 +1,8 @@
 #include "orthographic_camera.h"
 
-OrthographicCamera::OrthographicCamera(float left, float right, float top, float bottom, float near, float far):
-	_left(left), _right(right), _top(top), _bottom(bottom), _near(near), _far(far)
-{
-}
+OrthographicCamera::OrthographicCamera(float left, float right, float top, float bottom, float near, float far, glm::vec3 position):
+	_left(left), _right(right), _top(top), _bottom(bottom), _near(near), _far(far), Camera(position) {}
 
-OrthographicCamera::~OrthographicCamera()
-{
-
-}
 
 glm::mat4 OrthographicCamera::get_projection_matrix()
 {

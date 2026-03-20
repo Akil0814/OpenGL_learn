@@ -4,13 +4,13 @@
 class Camera
 {
 public:
-	Camera();
-	~Camera();
-
-	virtual void scale(float delta_scale);
+	Camera(glm::vec3 position = { 0.0f,0.0f,3.0f });
+	~Camera()=default;
 
 	glm::mat4 get_view_matrix();
 	virtual glm::mat4 get_projection_matrix();
+
+	virtual void scale(float delta_scale) {};
 
 public:
 	glm::vec3 _position{ 0.0f,0.0f,3.0f };

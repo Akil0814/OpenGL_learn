@@ -7,10 +7,6 @@ CameraControl::CameraControl()
 {
 }
 
-CameraControl::~CameraControl()
-{
-}
-
 void CameraControl::on_mouse(int button, int action, double x_pos, double y_pos)
 {
 	//判断是否按下
@@ -43,12 +39,6 @@ void CameraControl::on_mouse(int button, int action, double x_pos, double y_pos)
 	default:
 		break;
 	}
-
-}
-
-void CameraControl::on_cursor(double x_pos, double y_pos)
-{
-
 }
 
 void CameraControl::on_key(int key, int action, int mods)
@@ -57,15 +47,4 @@ void CameraControl::on_key(int key, int action, int mods)
 	if (action == GLFW_REPEAT)
 		return;
 	_key_map[key] = pressed;
-}
-
-void CameraControl::on_scroll(float offset)
-{
-
-}
-
-
-void CameraControl::on_update()
-{
-
 }

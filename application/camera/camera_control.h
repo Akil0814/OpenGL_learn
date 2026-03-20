@@ -8,15 +8,14 @@ class CameraControl
 {
 public:
 	CameraControl();
-	~CameraControl();
+	~CameraControl()=default;
 
 	virtual void on_mouse(int button, int action, double x_pos, double y_pos);
-	virtual void on_cursor(double x_pos, double y_pos);
 	virtual void on_key(int key, int action, int mods);
-	virtual void on_scroll(float offset);
 
-
-	virtual void on_update();
+	virtual void on_cursor(double x_pos, double y_pos) {};
+	virtual void on_scroll(float offset) {};
+	virtual void on_update() {};
 
 	void set_camera(Camera* camera) { _camera = camera; }
 	void set_sensitivity(float s) { _sensitivity = s; }

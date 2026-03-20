@@ -19,11 +19,8 @@ Shader* shader = nullptr;
 Texture* texture = nullptr;
 glm::mat4 transform(1.0f);
 
-PerspectiveCamera* camera = nullptr;
-//OrthographicCamera* camera = nullptr;
-
-//GameCameraControl* camera_control = nullptr;
-TrackBallCameraControl* camera_control = nullptr;
+Camera* camera = nullptr;
+CameraControl* camera_control = nullptr;
 
 void on_resize(int width, int height)
 {
@@ -73,8 +70,8 @@ void prepare_texture()
 
 void prepare_camera()
 {
-    //camera = new OrthographicCamera(-5.0f, 5.0f, 5.0f, -5.0f, 5.0f, -5.0f);
-    camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
+    camera = new OrthographicCamera(-5.0f, 5.0f, 5.0f, -5.0f, 5.0f, -5.0f,{0.0f,0.0f,7.0f});
+    //camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
 
     camera_control = new TrackBallCameraControl();
     //camera_control = new GameCameraControl();

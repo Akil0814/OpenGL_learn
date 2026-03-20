@@ -1,15 +1,8 @@
 #include "perspective_camera.h"
 
-PerspectiveCamera::PerspectiveCamera(float fovy, float aspect, float near, float far):
-	_fovy(fovy),_aspect(aspect),_near(near),_far(far)
-{
+PerspectiveCamera::PerspectiveCamera(float fovy, float aspect, float near, float far, glm::vec3 position) :
+	_fovy(fovy), _aspect(aspect), _near(near), _far(far), Camera(position) {}
 
-}
-
-PerspectiveCamera::~PerspectiveCamera()
-{
-
-}
 
 glm::mat4 PerspectiveCamera::get_projection_matrix()
 {

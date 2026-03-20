@@ -1,15 +1,7 @@
 #include "camera.h"
 
-//可以加入初始化参数
-Camera::Camera()
-{
-
-}
-
-Camera::~Camera()
-{
-
-}
+Camera::Camera(glm::vec3 position):_position(position)
+{}
 
 glm::mat4 Camera::get_view_matrix()
 {
@@ -25,11 +17,5 @@ glm::mat4 Camera::get_view_matrix()
 
 glm::mat4 Camera::get_projection_matrix()
 {
-
 	return glm::mat4(1.0f);
-}
-
-void Camera::scale(float delta_scale)
-{
-
 }

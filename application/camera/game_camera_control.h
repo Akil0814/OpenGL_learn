@@ -5,7 +5,7 @@ class GameCameraControl :public CameraControl
 {
 public:
 	GameCameraControl();
-	~GameCameraControl();
+	~GameCameraControl()=default;
 
 	void on_cursor(double x_pos, double y_pos) override;
 	void on_update() override;

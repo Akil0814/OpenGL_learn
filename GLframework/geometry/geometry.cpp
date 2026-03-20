@@ -5,6 +5,7 @@ Geometry::Geometry()
 {
 
 }
+
 Geometry::~Geometry()
 {
 	if(_VAO!=0)
@@ -197,7 +198,6 @@ Geometry* Geometry::create_sphere(float radius)
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	geometry->_indices_count = indices.size();
-
 
 	return geometry;
 }

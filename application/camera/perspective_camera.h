@@ -4,8 +4,8 @@
 class PerspectiveCamera :public Camera
 {
 public:
-	PerspectiveCamera(float fovy, float aspect,float near,float far);
-	~PerspectiveCamera();
+	PerspectiveCamera(float fovy, float aspect,float near,float far, glm::vec3 position = { 0.0f,0.0f,3.0f });
+	~PerspectiveCamera()=default;
 
 	glm::mat4 get_projection_matrix() override;
 
@@ -16,6 +16,5 @@ private:
 	float _aspect = { 0 };
 	float _near = { 0 };
 	float _far = { 0 };
-
 };
 

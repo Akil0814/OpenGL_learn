@@ -4,10 +4,6 @@ GameCameraControl::GameCameraControl()
 {
 
 }
-GameCameraControl::~GameCameraControl()
-{
-
-}
 
 void GameCameraControl::on_cursor(double x_pos, double y_pos)
 {
@@ -43,7 +39,6 @@ void GameCameraControl::yaw(float angle)
 	glm::mat4 mat = glm::rotate(glm::mat4(1.0f), glm::radians(angle), glm::vec3(0.0f,1.0f,0.0f));
 	_camera->_up = mat * glm::vec4(_camera->_up, 0.0f);
 	_camera->_right = mat * glm::vec4(_camera->_right, 0.0f);
-
 }
 
 void GameCameraControl::on_update()
@@ -71,5 +66,4 @@ void GameCameraControl::on_update()
 		direction = glm::normalize(direction);
 		_camera->_position += direction * _speed;
 	}
-
 }
