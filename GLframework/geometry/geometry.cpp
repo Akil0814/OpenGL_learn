@@ -105,14 +105,20 @@ Geometry* Geometry::create_sphere(float radius)
 {
 	Geometry* geometry = new Geometry();
 
-	//主要变量的声明
-	std::vector<GLfloat>positions{};
-	std::vector<GLfloat>uvs{};
-	std::vector<GLfloat>indices{};
-
 	//声明纬线与经线的数量
 	int num_lat_lines = 60;//纬线
 	int num_long_lines = 60;//经线
+
+	//主要变量的声明
+	std::vector<GLfloat>positions{};
+	std::vector<GLfloat>uvs{};
+	std::vector<GLuint>indices{};
+
+	int vertex_count = (num_lat_lines + 1) * (num_long_lines + 1);
+	positions.reserve(vertex_count * 3);
+	uvs.reserve(vertex_count * 2);
+	indices.reserve(num_lat_lines * num_long_lines * 6);
+
 
 	//通过两层循环(纬线在外，经线在内)->位置, uv
 	for (int i = 0; i <= num_lat_lines; i++)
@@ -171,21 +177,21 @@ Geometry* Geometry::create_sphere(float radius)
 	// 创建 position VBO
 	glGenBuffers(1, &geometry->_pos_VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, geometry->_pos_VBO);
-	glBufferData(GL_ARRAY_BUFFER, positions.size(), positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, positions.size()*sizeof(GLfloat), positions.data(), GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
 	// 创建 uv VBO
 	glGenBuffers(1, &geometry->_uv_VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, geometry->_uv_VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(GLfloat), uvs.data(), GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
 
 	// 创建 EBO
 	glGenBuffers(1, &geometry->_EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->_EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);

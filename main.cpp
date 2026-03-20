@@ -66,7 +66,9 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    texture = new Texture("assets/textures/Arcueid_morning.png",0);
+    //texture = new Texture("assets/textures/Arcueid_morning.png",0);
+    texture = new Texture("assets/textures/moon_t.png", 0);
+
 }
 
 void prepare_camera()
