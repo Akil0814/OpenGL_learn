@@ -52,8 +52,8 @@ void on_scroll(double offset)
 
 void prepareVAO()
 {
-    //geometry = Geometry::create_box(6.0);
-    geometry = Geometry::create_sphere(6.0);
+    geometry = Geometry::create_box(6.0);
+    //geometry = Geometry::create_sphere(6.0);
 }
 
 void prepare_shader()
@@ -63,15 +63,15 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    //texture = new Texture("assets/textures/Arcueid_morning.png",0);
-    texture = new Texture("assets/textures/moon_t.png", 0);
+    texture = new Texture("assets/textures/Arcueid_morning.png",0);
+    //texture = new Texture("assets/textures/moon_t.png", 0);
 
 }
 
 void prepare_camera()
 {
-    camera = new OrthographicCamera(-5.0f, 5.0f, 5.0f, -5.0f, 5.0f, -5.0f,{0.0f,0.0f,7.0f});
-    //camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
+    //camera = new OrthographicCamera(-5.0f, 5.0f, 5.0f, -5.0f, 5.0f, -5.0f,{0.0f,0.0f,7.0f});
+    camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
 
     camera_control = new TrackBallCameraControl();
     //camera_control = new GameCameraControl();
@@ -118,7 +118,7 @@ int main()
     prepare_camera();
     prepare_state();
 
-    glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     APP->set_resize_callback(on_resize);
     APP->set_mouse_callback(on_mouse);
