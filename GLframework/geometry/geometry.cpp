@@ -201,3 +201,50 @@ Geometry* Geometry::create_sphere(float radius)
 
 	return geometry;
 }
+
+Geometry* Geometry::create_squar(float size)
+{
+	Geometry* geometry = new Geometry();
+
+	float half_size = size / 2.0f;
+
+	float position[]
+	{
+		 half_size,  half_size,0,
+		 half_size, -half_size,0,
+		-half_size,  half_size,0,
+		-half_size, -half_size,0
+	};
+
+
+	float uvs[]
+	{
+		1,1,
+		1,0,
+		0,1,
+		0,0
+	};
+
+	unsigned int indices[]
+	{
+		1,2,3,
+		2,4,3
+	};
+
+	glGenVertexArrays(1, &geometry->_VAO);
+	glBindVertexArray(geometry->_VAO);
+
+	glGenBuffers(1, &geometry->_pos_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, geometry->_pos_VBO);
+	glBufferData(geometry->_pos_VBO, sizeof(position), position, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+
+	glGenBuffers(1, &geometry->_uv_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, geometry->_uv_VBO);
+	glBufferData(geometry->_uv_VBO, sizeof(uvs), uvs, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(1);
+
+	glGenBuffers(1,)
+
+}
+

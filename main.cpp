@@ -52,8 +52,8 @@ void on_scroll(double offset)
 
 void prepareVAO()
 {
-    geometry = Geometry::create_box(6.0);
-    //geometry = Geometry::create_sphere(6.0);
+    //geometry = Geometry::create_box(6.0);
+    geometry = Geometry::create_sphere(6.0);
 }
 
 void prepare_shader()
@@ -63,8 +63,8 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    texture = new Texture("assets/textures/Arcueid_morning.png",0);
-    //texture = new Texture("assets/textures/moon_t.png", 0);
+    //texture = new Texture("assets/textures/Arcueid_morning.png",0);
+    texture = new Texture("assets/textures/moon_t.png", 0);
 
 }
 
