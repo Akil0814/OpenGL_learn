@@ -202,11 +202,14 @@ Geometry* Geometry::create_sphere(float radius)
 	return geometry;
 }
 
-Geometry* Geometry::create_squar(float size)
+Geometry* Geometry::create_square(float size)
 {
 	Geometry* geometry = new Geometry();
 
 	float half_size = size / 2.0f;
+
+	geometry->_indices_count = 6;
+
 
 	float position[]
 	{
@@ -227,8 +230,8 @@ Geometry* Geometry::create_squar(float size)
 
 	unsigned int indices[]
 	{
-		1,2,3,
-		2,4,3
+		0, 1, 2,
+		1, 3, 2
 	};
 
 	glGenVertexArrays(1, &geometry->_VAO);
@@ -236,15 +239,24 @@ Geometry* Geometry::create_squar(float size)
 
 	glGenBuffers(1, &geometry->_pos_VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, geometry->_pos_VBO);
-	glBufferData(geometry->_pos_VBO, sizeof(position), position, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(position), position, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
 	glGenBuffers(1, &geometry->_uv_VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, geometry->_uv_VBO);
-	glBufferData(geometry->_uv_VBO, sizeof(uvs), uvs, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
 
-	glGenBuffers(1,)
 
+	glGenBuffers(1, &geometry->_EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->_EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	return geometry;
 }
 
