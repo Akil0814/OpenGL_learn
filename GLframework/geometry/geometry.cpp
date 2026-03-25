@@ -260,3 +260,95 @@ Geometry* Geometry::create_square(float size)
 	return geometry;
 }
 
+Geometry* Geometry::create_triangular_pyramid(float size)
+{
+	Geometry* geometry = new Geometry();
+
+	float h = sqrt(2.0f / 3.0f) * size; // 正四面体高度
+	float r = size / sqrt(3.0f); // 底面重心到顶点距离
+
+	float half_size = size / 2.0f;
+
+	geometry->_indices_count = 12;
+	
+	float position[] =
+	{
+		// 底面 ABC
+		 0.0f,      0.0f,  r,
+		-size * 0.5f, 0.0f, -r * 0.5f,
+		 size * 0.5f, 0.0f, -r * 0.5f,
+
+		 // 侧面 ABD
+		  0.0f,      0.0f,  r,
+		 -size * 0.5f, 0.0f, -r * 0.5f,
+		  0.0f,      h,     0.0f,
+
+		  // 侧面 BCD
+		  -size * 0.5f, 0.0f, -r * 0.5f,
+		   size * 0.5f, 0.0f, -r * 0.5f,
+		   0.0f,      h,     0.0f,
+
+		   // 侧面 CAD
+			size * 0.5f, 0.0f, -r * 0.5f,
+			0.0f,      0.0f,  r,
+			0.0f,      h,     0.0f
+	};
+
+	float uvs[] =
+	{
+		// 底面 ABC
+		0.5f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+
+		// 侧面 ABD
+		0.5f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+
+		// 侧面 BCD
+		0.5f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f,
+
+		// 侧面 CAD
+		0.5f, 1.0f,
+		0.0f, 0.0f,
+		1.0f, 0.0f
+	};  
+
+	unsigned int indices[] =
+	{
+		0, 1, 2,
+		3, 4, 5,
+		6, 7, 8,
+		9,10,11
+	};
+
+	glGenVertexArrays(1, &geometry->_VAO);
+	glBindVertexArray(geometry->_VAO);
+
+	glGenBuffers(1, &geometry->_pos_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, geometry->_pos_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(position), position, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+	glGenBuffers(1, &geometry->_uv_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, geometry->_uv_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+
+
+	glGenBuffers(1, &geometry->_EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->_EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+
+	return geometry;
+
+}
+

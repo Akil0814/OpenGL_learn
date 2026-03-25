@@ -54,9 +54,9 @@ void on_scroll(double offset)
 
 void prepareVAO()
 {
-    geometry2 = Geometry::create_box(6.0f);
+    //geometry2 = Geometry::create_box(6.0f);
     //geometry = Geometry::create_sphere(6.0f);
-    geometry = Geometry::create_square(2.0f);
+    geometry = Geometry::create_triangular_pyramid(3.0f);
 }
 
 void prepare_shader()
@@ -101,8 +101,8 @@ void render()
     shader->set_matrix_4b4("projectionMatrix", camera->get_projection_matrix());
 
     //绑定vao
-    GL_CALL(glBindVertexArray(geometry2->get_VAO()));
-    GL_CALL(glDrawElements(GL_TRIANGLES, geometry2->get_indices_count(), GL_UNSIGNED_INT, (void*)0));
+    //GL_CALL(glBindVertexArray(geometry2->get_VAO()));
+    //GL_CALL(glDrawElements(GL_TRIANGLES, geometry2->get_indices_count(), GL_UNSIGNED_INT, (void*)0));
 
     GL_CALL(glBindVertexArray(geometry->get_VAO()));
     GL_CALL(glDrawElements(GL_TRIANGLES, geometry->get_indices_count(), GL_UNSIGNED_INT, (void*)0));
