@@ -14,7 +14,8 @@
 #include "GLframework/geometry/geometry.h"
 
 //平形光
-glm::vec3 lightDirection = glm::vec3(-1.2f, -0.4f, -1.9f);//方向
+//glm::vec3 lightDirection = glm::vec3(-1.2f, -0.4f, -1.9f);//方向
+glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, -1.0f);//方向
 glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);//光强
 
 Geometry* geometry = nullptr;
