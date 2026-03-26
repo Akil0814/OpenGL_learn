@@ -39,6 +39,8 @@ public:
 
 	void set_vector3(const std::string& name, float x, float y, float z);
 	void set_vector3(const std::string& name, const float* values_3);
+	void set_vector3(const std::string& name, const glm::vec3 val);
+
 
 	void set_int(const std::string& name, int value);
 

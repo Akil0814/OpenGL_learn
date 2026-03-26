@@ -120,6 +120,14 @@ void Shader::set_vector3(const std::string& name, const float* values_3)
     GL_CALL(glUniform3fv(location, 1, values_3));
 }
 
+void Shader::set_vector3(const std::string& name, const glm::vec3 val)
+{
+    //1 通过名称拿到Uniform变量的Location
+    GLint location = glGetUniformLocation(_program, name.c_str());
+
+    GL_CALL(glUniform3f(location, val.x, val.y, val.z));
+}
+
 void Shader::set_int(const std::string& name, int value)
 {
     GLint location = glGetUniformLocation(_program, name.c_str());

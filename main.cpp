@@ -13,6 +13,9 @@
 
 #include "GLframework/geometry/geometry.h"
 
+//平形光
+glm::vec3 lightDirection = glm::vec3(-1.2f, -0.4f, -1.9f);//方向
+glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);//光强
 
 Geometry* geometry = nullptr;
 Geometry* geometry2 = nullptr;
@@ -54,9 +57,9 @@ void on_scroll(double offset)
 
 void prepareVAO()
 {
-    //geometry = Geometry::create_box(6.0f);
+    geometry = Geometry::create_box(6.0f);
     //geometry = Geometry::create_sphere(6.0f);
-    geometry = Geometry::create_square(3.0f);
+    //geometry = Geometry::create_square(3.0f);
 }
 
 void prepare_shader()
@@ -99,6 +102,10 @@ void render()
     shader->set_matrix_4b4("transform", transform);
     shader->set_matrix_4b4("viewMatrix", camera->get_view_matrix());
     shader->set_matrix_4b4("projectionMatrix", camera->get_projection_matrix());
+
+    //更新光源参数
+    shader->set_vector3("lightColor", lightColor);
+    shader->set_vector3("lightDirection", lightDirection);
 
     //绑定vao
     //GL_CALL(glBindVertexArray(geometry2->get_VAO()));
