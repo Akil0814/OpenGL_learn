@@ -77,7 +77,7 @@ void prepare_texture()
 void prepare_camera()
 {
     //camera = new OrthographicCamera(-5.0f, 5.0f, 5.0f, -5.0f, 5.0f, -5.0f,{0.0f,0.0f,7.0f});
-    camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f);
+    camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f, {0.0f,0.0f,10.0f});
 
     camera_control = new TrackBallCameraControl();
     //camera_control = new GameCameraControl();
@@ -99,13 +99,15 @@ void render()
     //绑定program
     shader->begin();
     shader->set_int("sampler",0);
-    shader->set_matrix_4b4("transform", transform);
+    shader->set_matrix_4b4("modelMatrix", transform);
     shader->set_matrix_4b4("viewMatrix", camera->get_view_matrix());
     shader->set_matrix_4b4("projectionMatrix", camera->get_projection_matrix());
 
     //更新光源参数
     shader->set_vector3("lightColor", lightColor);
     shader->set_vector3("lightDirection", lightDirection);
+
+    shader->set_vector3("cameraPosition", camera->_position);
 
     //绑定vao
     //GL_CALL(glBindVertexArray(geometry2->get_VAO()));
