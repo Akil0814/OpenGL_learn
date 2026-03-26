@@ -54,9 +54,9 @@ void on_scroll(double offset)
 
 void prepareVAO()
 {
-    //geometry2 = Geometry::create_box(6.0f);
+    //geometry = Geometry::create_box(6.0f);
     //geometry = Geometry::create_sphere(6.0f);
-    geometry = Geometry::create_triangular_pyramid(3.0f);
+    geometry = Geometry::create_square(3.0f);
 }
 
 void prepare_shader()
@@ -123,7 +123,7 @@ int main()
     prepare_camera();
     prepare_state();
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(0.0f, 0.03f, 0.2f, 1.0f);
 
     APP->set_resize_callback(on_resize);
     APP->set_mouse_callback(on_mouse);

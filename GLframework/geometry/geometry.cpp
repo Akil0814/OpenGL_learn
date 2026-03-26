@@ -9,16 +9,19 @@ Geometry::Geometry()
 Geometry::~Geometry()
 {
 	if(_VAO!=0)
-	glDeleteVertexArrays(1, &_VAO);
+		glDeleteVertexArrays(1, &_VAO);
 
 	if (_pos_VBO != 0)
-	glDeleteBuffers(1, &_pos_VBO);
+		glDeleteBuffers(1, &_pos_VBO);
 
 	if (_uv_VBO != 0)
-	glDeleteBuffers(1, &_uv_VBO);
+		glDeleteBuffers(1, &_uv_VBO);
+
+	if (_normal_VBO != 0)
+		glDeleteBuffers(1, &_normal_VBO);
 
 	if (_EBO != 0)
-	glDeleteBuffers(1, &_EBO);
+		glDeleteBuffers(1, &_EBO);
 }
 
 Geometry* Geometry::create_box(float size)
@@ -58,6 +61,44 @@ Geometry* Geometry::create_box(float size)
 		0.0f, 0.0f,		1.0f, 0.0f,		1.0f, 1.0f,		0.0f, 1.0f
 	};
 
+	float normals[] = {
+		// Front
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+
+		// Back
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+		0.0f, 0.0f, -1.0f,
+
+		//left
+		-1.0f,0.0f,0.0f,
+		-1.0f,0.0f,0.0f,
+		-1.0f,0.0f,0.0f,
+		-1.0f,0.0f,0.0f,
+
+		//right
+		1.0f,0.0f,0.0f,
+		1.0f,0.0f,0.0f,
+		1.0f,0.0f,0.0f,
+		1.0f,0.0f,0.0f,
+
+		//top
+		0.0f,1.0f,0.0f,
+		0.0f,1.0f,0.0f,
+		0.0f,1.0f,0.0f,
+		0.0f,1.0f,0.0f,
+
+		//bottom
+		0.0f,-1.0f,0.0f,
+		0.0f,-1.0f,0.0f,
+		0.0f,-1.0f,0.0f,
+		0.0f,-1.0f,0.0f,
+	};
+
 	unsigned int indices[] = {
 		// Front
 		0, 1, 2,		2, 3, 0,
@@ -91,6 +132,13 @@ Geometry* Geometry::create_box(float size)
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
 
+	// 创建 normal VBO
+	glGenBuffers(1, &geometry->_normal_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, geometry->_normal_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
 	// 创建 EBO
 	glGenBuffers(1, &geometry->_EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->_EBO);
@@ -114,11 +162,14 @@ Geometry* Geometry::create_sphere(float radius)
 	std::vector<GLfloat>positions{};
 	std::vector<GLfloat>uvs{};
 	std::vector<GLuint>indices{};
+	std::vector<GLfloat>normals{};
+
 
 	int vertex_count = (num_lat_lines + 1) * (num_long_lines + 1);
 	positions.reserve(vertex_count * 3);
 	uvs.reserve(vertex_count * 2);
 	indices.reserve(num_lat_lines * num_long_lines * 6);
+	normals.reserve(num_lat_lines * num_long_lines * 6);
 
 
 	//通过两层循环(纬线在外，经线在内)->位置, uv
@@ -146,6 +197,11 @@ Geometry* Geometry::create_sphere(float radius)
 
 			uvs.push_back(u);
 			uvs.push_back(v);
+
+			//注意：法线方向没问题 但是长度不为1
+			normals.push_back(x);
+			normals.push_back(y);
+			normals.push_back(z);
 		}
 	}
 
@@ -189,6 +245,13 @@ Geometry* Geometry::create_sphere(float radius)
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
 
+	// 创建 normal VBO
+	glGenBuffers(1, &geometry->_normal_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, geometry->_normal_VBO);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(GLfloat), normals.data(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
 	// 创建 EBO
 	glGenBuffers(1, &geometry->_EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry->_EBO);
@@ -219,13 +282,20 @@ Geometry* Geometry::create_square(float size)
 		-half_size, -half_size,0
 	};
 
-
 	float uvs[]
 	{
 		1,1,
 		1,0,
 		0,1,
 		0,0
+	};
+
+	float normals[]
+	{
+		0.0f,0.0f,1.0f,
+		0.0f,0.0f,1.0f,
+		0.0f,0.0f,1.0f,
+		0.0f,0.0f,1.0f,
 	};
 
 	unsigned int indices[]
@@ -248,6 +318,13 @@ Geometry* Geometry::create_square(float size)
 	glBufferData(GL_ARRAY_BUFFER, sizeof(uvs), uvs, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+
+
+	glGenBuffers(1, &geometry->_normal_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, geometry->_normal_VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normals), normals, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
 
 
 	glGenBuffers(1, &geometry->_EBO);

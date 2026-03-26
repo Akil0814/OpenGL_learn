@@ -16,8 +16,11 @@ public:
 
 private:
 	GLuint _VAO = { 0 };
+
 	GLuint _pos_VBO = { 0 };
 	GLuint _uv_VBO = { 0 };
+	GLuint _normal_VBO = { 0 };
+
 	GLuint _EBO = { 0 };
 
 	uint32_t _indices_count = { 0 };
