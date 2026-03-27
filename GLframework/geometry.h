@@ -1,4 +1,6 @@
-#include "../core.h"
+#pragma once
+
+#include "core.h"
 
 class Geometry
 {

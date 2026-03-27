@@ -11,27 +11,22 @@
 #include "application/camera/track_ball_camera_control.h"
 #include "application/camera/game_camera_control.h"
 
-#include "GLframework/geometry/geometry.h"
+#include "GLframework/geometry.h"
+#include "GLframework/material/phong_material.h"
+#include "GLframework/mesh.h"
+#include "GLframework/renderer/renderer.h"
 
-//平形光
-//glm::vec3 lightDirection = glm::vec3(-1.2f, -0.4f, -1.9f);//方向
-//glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, -1.0f);//方向
-glm::vec3 lightDirection = glm::vec3(-1.0f, 0.0f, -1.0f);//方向
-glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);//光强
-
-glm::vec3 ambientColor = glm::vec3(0.2f, 0.2f, 0.2f);
-
-float specularIntensity = 0.05;
-
-Geometry* geometry = nullptr;
-Geometry* geometry2 = nullptr;
-
-Shader* shader = nullptr;
-Texture* texture = nullptr;
-glm::mat4 transform(1.0f);
+Renderer* renderer = nullptr;
+std::vector<Mesh*> meshes{};
+DirectionalLight* dir_light = nullptr;
+AmbientLight* amb_light = nullptr;
 
 Camera* camera = nullptr;
 CameraControl* camera_control = nullptr;
+
+Geometry* geometry = nullptr;
+Shader* shader = nullptr;
+Texture* texture = nullptr;
 
 void on_resize(int width, int height)
 {
@@ -61,24 +56,27 @@ void on_scroll(double offset)
     camera_control->on_scroll(offset);
 }
 
-void prepareVAO()
+void prepare()
 {
-    //geometry = Geometry::create_box(6.0f);
-    geometry = Geometry::create_sphere(6.0f);
-    //geometry = Geometry::create_square(3.0f);
+    renderer = new Renderer();
+
+    //创建Geometry
+    Geometry* geometry = Geometry::create_sphere(6.0f);
+
+    //创建一个material
+    auto material = new PhongMaterial();
+    material->_shiness = 16.0f;
+    material->_diffuse = new Texture("assets/textures/Arcueid_morning.png", 0);
+    //生成mesh
+
+    auto mesh = new Mesh(geometry, material);
+    meshes.push_back(mesh);
+
+    dir_light = new DirectionalLight();
+    amb_light = new AmbientLight();
+    amb_light->_color = glm::vec3(0.1f);
 }
 
-void prepare_shader()
-{
-    shader = new Shader("assets/shaders/vertex.glsl", "assets/shaders/fragment.glsl");
-}
-
-void prepare_texture()
-{
-    //texture = new Texture("assets/textures/Arcueid_morning.png",0);
-    texture = new Texture("assets/textures/moon_t.png", 0);
-
-}
 
 void prepare_camera()
 {
@@ -90,53 +88,6 @@ void prepare_camera()
     camera_control->set_camera(camera);
 }
 
-void prepare_state()
-{
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-}
-
-void do_ransfrom()
-{
-    transform = glm::rotate(transform, 0.0003f, glm::vec3(0.0f, 1.0f, 1.0f));
-}
-
-void render()
-{
-    //清理颜色缓存于深度缓存
-    GL_CALL(glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT));
-
-    //绑定program
-    shader->begin();
-    shader->set_int("sampler",0);
-    shader->set_matrix_4b4("modelMatrix", transform);
-    shader->set_matrix_4b4("viewMatrix", camera->get_view_matrix());
-    shader->set_matrix_4b4("projectionMatrix", camera->get_projection_matrix());
-
-
-    //计算 normalMatrix
-    glm::mat nromalMatrix = glm::transpose(glm::inverse(glm::mat3(transform)));
-    shader->set_matrix_3b3("normalMatrix", nromalMatrix);
-
-    //更新光源参数
-    shader->set_vector3("lightColor", lightColor);
-    shader->set_vector3("lightDirection", lightDirection);
-    shader->set_float("specularIntensity", specularIntensity);
-
-    shader->set_vector3("cameraPosition", camera->_position);
-
-    shader->set_vector3("ambientColor", ambientColor);
-
-    //绑定vao
-    //GL_CALL(glBindVertexArray(geometry2->get_VAO()));
-    //GL_CALL(glDrawElements(GL_TRIANGLES, geometry2->get_indices_count(), GL_UNSIGNED_INT, (void*)0));
-
-    GL_CALL(glBindVertexArray(geometry->get_VAO()));
-    GL_CALL(glDrawElements(GL_TRIANGLES, geometry->get_indices_count(), GL_UNSIGNED_INT, (void*)0));
-
-    glBindVertexArray(0);
-    shader->end();
-}
 
 int main()
 {
@@ -144,11 +95,8 @@ int main()
     if (!APP->init(800, 600))
         return -1;
 
-    prepare_shader();
-    prepareVAO();
-    prepare_texture();
+    prepare();
     prepare_camera();
-    prepare_state();
 
     glClearColor(0.0f, 0.03f, 0.2f, 1.0f);
 
@@ -161,8 +109,7 @@ int main()
     while (true)
     {
         camera_control->on_update();
-        render();
-        do_ransfrom();
+        renderer->on_render(meshes,camera,dir_light,amb_light);
         if (!APP->update())
             break;
     }
