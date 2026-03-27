@@ -13,17 +13,17 @@ void Object::set_position(glm::vec3 pos)
 
 void Object::rotate_x(float angle)
 {
-	angle += _angle_x;
+	_angle_x += angle;
 }
 
 void Object::rotate_y(float angle)
 {
-	angle += _angle_y;
+	_angle_y += angle;
 }
 
 void Object::rotate_z(float angle)
 {
-	angle += _angle_z;
+	_angle_z += angle;
 }
 
 void Object::set_scale(glm::vec3 scale)
@@ -40,8 +40,8 @@ glm::mat4 Object::get_model_matrix() const
 
 	//pitch(点头)->yaw(摇头)->roll(滚)
 	transform = glm::rotate(transform, glm::radians(_angle_x), glm::vec3(1.0f, 0.0f, 0.0f));//
-	transform = glm::rotate(transform, glm::radians(_angle_y), glm::vec3(1.0f, 0.0f, 0.0f));//
-	transform = glm::rotate(transform, glm::radians(_angle_z), glm::vec3(1.0f, 0.0f, 0.0f));//
+	transform = glm::rotate(transform, glm::radians(_angle_y), glm::vec3(0.0f, 1.0f, 0.0f));//
+	transform = glm::rotate(transform, glm::radians(_angle_z), glm::vec3(0.0f, 0.0f, 1.0f));//
 
 	transform = glm::translate(glm::mat4(1.0f), _position) * transform;
 

@@ -3,7 +3,7 @@
 
 Renderer::Renderer()
 {
-	_phong_shader = new Shader("assets/shader/phong.vert", "assets/shader/phong.frag");
+	_phong_shader = new Shader("assets/shaders/phong.vert", "assets/shaders/phong.frag");
 }
 Renderer::~Renderer()
 {}
@@ -48,10 +48,14 @@ void Renderer::on_render(const std::vector<Mesh*>& meshes,Camera* camera,
 			shader->set_matrix_4b4("viewMatrix", camera->get_view_matrix());
 			shader->set_matrix_4b4("projectionMatrix", camera->get_projection_matrix());
 
+			auto normal_matrix = glm::mat3(glm::transpose(glm::inverse(mesh->get_model_matrix())));
+			shader->set_matrix_3b3("normalMatrix", normal_matrix);
+
 			//更新光源参数
 			shader->set_vector3("lightColor", dir_light->_color);
 			shader->set_vector3("lightDirection", dir_light->_direction);
 			shader->set_float("specularIntensity", dir_light->_specular_intensity);
+			shader->set_float("shiness", phong_mat->_shiness);
 
 			shader->set_vector3("ambientColor", amb_light->_color);
 

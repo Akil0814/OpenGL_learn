@@ -24,10 +24,6 @@ AmbientLight* amb_light = nullptr;
 Camera* camera = nullptr;
 CameraControl* camera_control = nullptr;
 
-Geometry* geometry = nullptr;
-Shader* shader = nullptr;
-Texture* texture = nullptr;
-
 void on_resize(int width, int height)
 {
     std::cout << "new window size:" << width << " " << height << std::endl;
@@ -61,16 +57,24 @@ void prepare()
     renderer = new Renderer();
 
     //创建Geometry
-    Geometry* geometry = Geometry::create_sphere(6.0f);
+    Geometry* geometry = Geometry::create_sphere(3.0f);
 
     //创建一个material
-    auto material = new PhongMaterial();
-    material->_shiness = 16.0f;
-    material->_diffuse = new Texture("assets/textures/Arcueid_morning.png", 0);
+    auto material_1 = new PhongMaterial();
+    material_1->_shiness = 32.0f;
+    material_1->_diffuse = new Texture("assets/textures/Arcueid.png", 0);
+
+    auto material_2 = new PhongMaterial();
+    material_2->_shiness = 32.0f;
+    material_2->_diffuse = new Texture("assets/textures/Arcueid_morning.png", 0);
     //生成mesh
 
-    auto mesh = new Mesh(geometry, material);
-    meshes.push_back(mesh);
+    auto mesh_1 = new Mesh(geometry, material_1);
+    auto mesh_2 = new Mesh(geometry, material_2);
+    mesh_2->set_position({ 6.5f,0.0f,0.0f });
+
+    meshes.push_back(mesh_1);
+    meshes.push_back(mesh_2);
 
     dir_light = new DirectionalLight();
     amb_light = new AmbientLight();
@@ -108,8 +112,12 @@ int main()
 
     while (true)
     {
+        meshes[1]->rotate_x(0.01f);
+        meshes[1]->rotate_y(0.1f);
+
         camera_control->on_update();
         renderer->on_render(meshes,camera,dir_light,amb_light);
+
         if (!APP->update())
             break;
     }

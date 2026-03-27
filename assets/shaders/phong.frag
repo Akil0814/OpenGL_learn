@@ -17,6 +17,8 @@ uniform vec3 ambientColor;
 uniform vec3 cameraPosition;
 uniform float specularIntensity;
 
+uniform float shiness;
+
 
 void main()
 {
@@ -40,7 +42,7 @@ void main()
 	float specular=clamp(dot(lightReflect,-viewDir),0.0,1.0);
 	
 	//控制光斑大小
-	specular = pow(specular,64);
+	specular = pow(specular,shiness);
 
 	vec3 specularColor=lightColor*specular*flag*specularIntensity;
 
