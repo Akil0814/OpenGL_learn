@@ -10,7 +10,12 @@ uniform sampler2D sampler;
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
 
+uniform vec3 ambientColor;
+
+
+//相机位置
 uniform vec3 cameraPosition;
+uniform float specularIntensity;
 
 
 void main()
@@ -26,11 +31,23 @@ void main()
 	vec3 diffuseColor = lightColor* diffuse* ObjColor;
 
 	//计算specular
-	vec3 lightReflect = normalize(reflect(lightDirN,normalN));
-	float specular=clamp(dot(lightReflect,-viewDir),0.0,1.0);
-	vec3 specularColor=lightColor*specular;
+	//防止背面光的照入
+	float dotResult= dot(-lightDirN,normalN);
+	float flag=step(0.0,dotResult);
 
-	vec3 finalColor = diffuseColor+specularColor;
+	vec3 lightReflect = normalize(reflect(lightDirN,normalN));
+
+	float specular=clamp(dot(lightReflect,-viewDir),0.0,1.0);
+	
+	//控制光斑大小
+	specular = pow(specular,64);
+
+	vec3 specularColor=lightColor*specular*flag*specularIntensity;
+
+	//环境光计算
+	vec3 ambientColor=ObjColor*ambientColor;
+
+	vec3 finalColor = diffuseColor+specularColor+ambientColor;
 
 	//FragColor = vec4(diffuseColor,1.0);
 	//FragColor = vec4(specularColor,1.0);

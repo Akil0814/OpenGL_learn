@@ -15,8 +15,13 @@
 
 //平形光
 //glm::vec3 lightDirection = glm::vec3(-1.2f, -0.4f, -1.9f);//方向
-glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, -1.0f);//方向
+//glm::vec3 lightDirection = glm::vec3(-1.0f, -1.0f, -1.0f);//方向
+glm::vec3 lightDirection = glm::vec3(-1.0f, 0.0f, -1.0f);//方向
 glm::vec3 lightColor = glm::vec3(1.0f, 1.0f, 1.0f);//光强
+
+glm::vec3 ambientColor = glm::vec3(0.2f, 0.2f, 0.2f);
+
+float specularIntensity = 0.05;
 
 Geometry* geometry = nullptr;
 Geometry* geometry2 = nullptr;
@@ -58,8 +63,8 @@ void on_scroll(double offset)
 
 void prepareVAO()
 {
-    geometry = Geometry::create_box(6.0f);
-    //geometry = Geometry::create_sphere(6.0f);
+    //geometry = Geometry::create_box(6.0f);
+    geometry = Geometry::create_sphere(6.0f);
     //geometry = Geometry::create_square(3.0f);
 }
 
@@ -70,8 +75,8 @@ void prepare_shader()
 
 void prepare_texture()
 {
-    texture = new Texture("assets/textures/Arcueid_morning.png",0);
-    //texture = new Texture("assets/textures/moon_t.png", 0);
+    //texture = new Texture("assets/textures/Arcueid_morning.png",0);
+    texture = new Texture("assets/textures/moon_t.png", 0);
 
 }
 
@@ -91,6 +96,10 @@ void prepare_state()
     glDepthFunc(GL_LESS);
 }
 
+void do_ransfrom()
+{
+    transform = glm::rotate(transform, 0.0003f, glm::vec3(0.0f, 1.0f, 1.0f));
+}
 
 void render()
 {
@@ -104,11 +113,19 @@ void render()
     shader->set_matrix_4b4("viewMatrix", camera->get_view_matrix());
     shader->set_matrix_4b4("projectionMatrix", camera->get_projection_matrix());
 
+
+    //计算 normalMatrix
+    glm::mat nromalMatrix = glm::transpose(glm::inverse(glm::mat3(transform)));
+    shader->set_matrix_3b3("normalMatrix", nromalMatrix);
+
     //更新光源参数
     shader->set_vector3("lightColor", lightColor);
     shader->set_vector3("lightDirection", lightDirection);
+    shader->set_float("specularIntensity", specularIntensity);
 
     shader->set_vector3("cameraPosition", camera->_position);
+
+    shader->set_vector3("ambientColor", ambientColor);
 
     //绑定vao
     //GL_CALL(glBindVertexArray(geometry2->get_VAO()));
@@ -145,6 +162,7 @@ int main()
     {
         camera_control->on_update();
         render();
+        do_ransfrom();
         if (!APP->update())
             break;
     }

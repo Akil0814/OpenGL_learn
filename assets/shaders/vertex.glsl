@@ -12,6 +12,8 @@ uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
+uniform mat3 normalMatrix;
+
 
 
 //aPos作为attribute(属性)传入shader 原则上不允许更改
@@ -29,5 +31,6 @@ void main()
 	gl_Position = projectionMatrix* viewMatrix * vec4(worldPosition,1.0);
 
 	uv=aUV;
-	normal=aNormal;
+	//normal= transpose(inverse(mat3(modelMatrix))) * aNormal;
+	normal= normalMatrix * aNormal;
 }

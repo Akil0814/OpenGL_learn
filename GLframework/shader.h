@@ -45,6 +45,8 @@ public:
 	void set_int(const std::string& name, int value);
 
 	void set_matrix_4b4(const std::string& name,glm::mat4 value);
+	void set_matrix_3b3(const std::string& name, glm::mat3 value);
+
 
 private:
 	void check_shader_errors(GLuint target, Type type);
