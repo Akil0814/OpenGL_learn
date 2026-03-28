@@ -6,6 +6,7 @@ in vec3 normal;
 in vec3 worldPosition;
 
 uniform sampler2D sampler;
+uniform sampler2D specular_mask_sampler;
 
 uniform vec3 lightDirection;
 uniform vec3 lightColor;
@@ -44,7 +45,9 @@ void main()
 	//控制光斑大小
 	specular = pow(specular,shiness);
 
-	vec3 specularColor=lightColor*specular*flag*specularIntensity;
+	float specularMask= texture(specular_mask_sampler,uv).r;
+
+	vec3 specularColor=lightColor*specular*flag*specularIntensity*specularMask;
 
 	//环境光计算
 	vec3 ambientColor=ObjColor*ambientColor;

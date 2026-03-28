@@ -46,7 +46,7 @@ void on_motion(double x_pos, double y_pos)
 {
     camera_control->on_cursor(x_pos, y_pos);
 }
-//
+
 void on_scroll(double offset)
 {
     camera_control->on_scroll(offset);
@@ -57,30 +57,22 @@ void prepare()
     renderer = new Renderer();
 
     //创建Geometry
-    Geometry* geometry = Geometry::create_sphere(3.0f);
+    Geometry* geometry = Geometry::create_box(6.0f);
 
     //创建一个material
     auto material_1 = new PhongMaterial();
-    material_1->_shiness = 32.0f;
-    material_1->_diffuse = new Texture("assets/textures/Arcueid.png", 0);
-
-    auto material_2 = new PhongMaterial();
-    material_2->_shiness = 32.0f;
-    material_2->_diffuse = new Texture("assets/textures/Arcueid_morning.png", 0);
-    //生成mesh
+    material_1->_shiness = 16.0f;
+    material_1->_diffuse = new Texture("assets/textures/box.png", 0);
+    material_1->_specular_mask = new Texture("assets/textures/sp_mask.png", 1);
 
     auto mesh_1 = new Mesh(geometry, material_1);
-    auto mesh_2 = new Mesh(geometry, material_2);
-    mesh_2->set_position({ 6.5f,0.0f,0.0f });
 
     meshes.push_back(mesh_1);
-    meshes.push_back(mesh_2);
 
     dir_light = new DirectionalLight();
     amb_light = new AmbientLight();
     amb_light->_color = glm::vec3(0.1f);
 }
-
 
 void prepare_camera()
 {
@@ -92,11 +84,10 @@ void prepare_camera()
     camera_control->set_camera(camera);
 }
 
-
 int main()
 {
 	std::cout << "OpenGL" << std::endl;
-    if (!APP->init(800, 600))
+    if (!APP->init(1080, 720))
         return -1;
 
     prepare();
@@ -112,8 +103,8 @@ int main()
 
     while (true)
     {
-        meshes[1]->rotate_x(0.01f);
-        meshes[1]->rotate_y(0.1f);
+        //meshes[1]->rotate_x(0.01f);
+        //meshes[1]->rotate_y(0.1f);
 
         camera_control->on_update();
         renderer->on_render(meshes,camera,dir_light,amb_light);

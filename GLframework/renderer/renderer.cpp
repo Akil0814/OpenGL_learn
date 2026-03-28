@@ -42,6 +42,11 @@ void Renderer::on_render(const std::vector<Mesh*>& meshes,Camera* camera,
 			shader->set_int("sampler", 0);
 			phong_mat->_diffuse->bind();
 
+			//高光蒙版的帧更新
+			shader->set_int("specular_mask_sampler", 1);
+			phong_mat->_specular_mask->bind();
+
+
 			//mvp变换矩阵
 			shader->set_matrix_4b4("modelMatrix", mesh->get_model_matrix());
 			//获取视点
