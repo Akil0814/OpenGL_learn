@@ -1,9 +1,12 @@
 #include "renderer.h"
 #include "../material/phong_material.h"
+#include "../material/white_material.h"
 
 Renderer::Renderer()
 {
 	_phong_shader = new Shader("assets/shaders/phong.vert", "assets/shaders/phong.frag");
+	_white_shader = new Shader("assets/shaders/white.vert", "assets/shaders/white.frag");
+
 }
 Renderer::~Renderer()
 {}
@@ -68,6 +71,16 @@ void Renderer::on_render(const std::vector<Mesh*>& meshes,Camera* camera,
 			shader->set_vector3("cameraPosition", camera->_position);
 		}
 			break;
+
+		case MaterialType::WhiteMaterial:
+		{
+			//mvp变换矩阵
+			shader->set_matrix_4b4("modelMatrix", mesh->get_model_matrix());
+			shader->set_matrix_4b4("viewMatrix", camera->get_view_matrix());
+			shader->set_matrix_4b4("projectionMatrix", camera->get_projection_matrix());
+		}
+			break;
+
 		default:
 			break;
 		}
@@ -89,6 +102,11 @@ Shader* Renderer::pick_shader(MaterialType type)
 	case MaterialType::PhongMaterial:
 		result = _phong_shader;
 		break;
+
+	case MaterialType::WhiteMaterial:
+		result = _white_shader;
+		break;
+
 	default:
 		break;
 	}

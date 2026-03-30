@@ -24,4 +24,6 @@ private:
 
 private:
 	Shader* _phong_shader = { nullptr };
+	Shader* _white_shader = { nullptr };
+
 };

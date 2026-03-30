@@ -13,6 +13,8 @@
 
 #include "GLframework/geometry.h"
 #include "GLframework/material/phong_material.h"
+#include "GLframework/material/white_material.h"
+
 #include "GLframework/mesh.h"
 #include "GLframework/renderer/renderer.h"
 
@@ -58,16 +60,23 @@ void prepare()
 
     //创建Geometry
     Geometry* geometry = Geometry::create_box(6.0f);
-
     //创建一个material
     auto material_1 = new PhongMaterial();
     material_1->_shiness = 16.0f;
     material_1->_diffuse = new Texture("assets/textures/box.png", 0);
     material_1->_specular_mask = new Texture("assets/textures/sp_mask.png", 1);
-
     auto mesh_1 = new Mesh(geometry, material_1);
 
     meshes.push_back(mesh_1);
+
+    //创建白色物体
+    Geometry* geometry_w = Geometry::create_sphere(0.5f);
+
+    auto material_w = new WhiteMaterial();
+    auto mesh_w = new Mesh(geometry_w, material_w);
+    mesh_w->set_position(glm::vec3(3.0, 3.0, 3.0));
+
+    meshes.push_back(mesh_w);
 
     dir_light = new DirectionalLight();
     amb_light = new AmbientLight();
