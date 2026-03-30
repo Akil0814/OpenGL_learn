@@ -47,3 +47,8 @@ glm::mat4 Object::get_model_matrix() const
 
 	return transform;
 }
+
+glm::vec3 Object::get_position()const
+{
+	return _position;
+}

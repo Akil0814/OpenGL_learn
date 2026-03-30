@@ -17,10 +17,13 @@
 
 #include "GLframework/mesh.h"
 #include "GLframework/renderer/renderer.h"
+#include "GLframework/light/point_light.h"
 
 Renderer* renderer = nullptr;
 std::vector<Mesh*> meshes{};
 DirectionalLight* dir_light = nullptr;
+PointLight* point_light = nullptr;
+
 AmbientLight* amb_light = nullptr;
 
 Camera* camera = nullptr;
@@ -59,7 +62,7 @@ void prepare()
     renderer = new Renderer();
 
     //创建Geometry
-    Geometry* geometry = Geometry::create_box(6.0f);
+    Geometry* geometry = Geometry::create_box(3.0f);
     //创建一个material
     auto material_1 = new PhongMaterial();
     material_1->_shiness = 16.0f;
@@ -70,15 +73,21 @@ void prepare()
     meshes.push_back(mesh_1);
 
     //创建白色物体
-    Geometry* geometry_w = Geometry::create_sphere(0.5f);
+    Geometry* geometry_w = Geometry::create_sphere(0.1f);
 
     auto material_w = new WhiteMaterial();
     auto mesh_w = new Mesh(geometry_w, material_w);
-    mesh_w->set_position(glm::vec3(3.0, 3.0, 3.0));
+    mesh_w->set_position(glm::vec3(10.0, 0.0, 0.0));
 
     meshes.push_back(mesh_w);
 
-    dir_light = new DirectionalLight();
+    // dir_light = new DirectionalLight();
+    point_light = new PointLight();
+    point_light->set_position(mesh_w->get_position());
+    point_light->_k1 = 0.07f;
+    point_light->_k2 = 0.017f;
+    point_light->_kc = 1.0f;
+
     amb_light = new AmbientLight();
     amb_light->_color = glm::vec3(0.1f);
 }
@@ -116,7 +125,7 @@ int main()
         //meshes[1]->rotate_y(0.1f);
 
         camera_control->on_update();
-        renderer->on_render(meshes,camera,dir_light,amb_light);
+        renderer->on_render(meshes,camera,point_light,amb_light);
 
         if (!APP->update())
             break;

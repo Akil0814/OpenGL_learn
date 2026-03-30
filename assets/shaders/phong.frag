@@ -8,8 +8,13 @@ in vec3 worldPosition;
 uniform sampler2D sampler;
 uniform sampler2D specular_mask_sampler;
 
-uniform vec3 lightDirection;
+uniform vec3 lightPosition;
 uniform vec3 lightColor;
+
+uniform float k1;
+uniform float k2; 
+uniform float kc; 
+
 
 uniform vec3 ambientColor;
 
@@ -26,8 +31,12 @@ void main()
 	//计算光照的通用数据
 	vec3 ObjColor = texture(sampler,uv).xyz;
 	vec3 normalN=normalize(normal);
-	vec3 lightDirN=normalize(lightDirection);
+	vec3 lightDirN=normalize(worldPosition-lightPosition);
 	vec3 viewDir=normalize(worldPosition-cameraPosition);
+
+	//计算衰减值
+	float dist = length(worldPosition-lightPosition);
+	float attenuation = 1.0/(k2*dist*dist+k1*dist+kc);
 
 	//计算diffuse(漫反射)相关数据
 	float diffuse= clamp(dot(-lightDirN,normalN),0.0,1.0);
@@ -52,7 +61,7 @@ void main()
 	//环境光计算
 	vec3 ambientColor=ObjColor*ambientColor;
 
-	vec3 finalColor = diffuseColor+specularColor+ambientColor;
+	vec3 finalColor = (diffuseColor+specularColor)*attenuation+ambientColor;
 
 	//FragColor = vec4(diffuseColor,1.0);
 	//FragColor = vec4(specularColor,1.0);
