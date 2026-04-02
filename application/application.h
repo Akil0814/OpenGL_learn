@@ -23,6 +23,7 @@ public:
 
 	bool destroy();
 
+	GLFWwindow* get_window() { return _window; }
 	uint32_t get_width()const {return _width;}
 	uint32_t get_height()const {return _height;}
 	void get_cursor_position(double* x, double* y);

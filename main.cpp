@@ -20,6 +20,9 @@
 #include "GLframework/light/point_light.h"
 #include "GLframework/light/spot_light.h"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 Renderer* renderer = nullptr;
 std::vector<Mesh*> meshes{};
@@ -33,6 +36,8 @@ AmbientLight* amb_light = nullptr;
 
 Camera* camera = nullptr;
 CameraControl* camera_control = nullptr;
+
+glm::vec3 clear_color(0.0f);
 
 void on_resize(int width, int height)
 {
@@ -97,7 +102,7 @@ void prepare()
     dir_light->_direction= glm::vec3(1.0f);
 
     auto pointLight1 = new PointLight();
-    pointLight1->set_position(glm::vec3(1.0f, 0.0f, 0.0f));
+    pointLight1->set_position(glm::vec3(8.0f, 0.0f, 0.0f));
     pointLight1->_color = glm::vec3(1.0f, 0.0f, 0.0f);
     pointLight1->_k2 = 0.0f;
     pointLight1->_k1 = 0.0f;
@@ -105,7 +110,7 @@ void prepare()
     point_lights.push_back(pointLight1);
 
     auto pointLight2 = new PointLight();
-    pointLight2->set_position(glm::vec3(0.0f, 1.0f, 0.0f));
+    pointLight2->set_position(glm::vec3(0.0f, 8.0f, 0.0f));
     pointLight2->_color = glm::vec3(0.0f, 1.0f, 0.0f);
     pointLight2->_k2 = 0.0f;
     pointLight2->_k1 = 0.0f;
@@ -113,7 +118,7 @@ void prepare()
     point_lights.push_back(pointLight2);
 
     auto pointLight3 = new PointLight();
-    pointLight3->set_position(glm::vec3(0.0f, -1.0f, 0.0f));
+    pointLight3->set_position(glm::vec3(0.0f, -8.0f, 0.0f));
     pointLight3->_color = glm::vec3(0.0f, 0.0f, 1.0f);
     pointLight3->_k2 = 0.0f;
     pointLight3->_k1 = 0.0f;
@@ -121,7 +126,7 @@ void prepare()
     point_lights.push_back(pointLight3);
 
     auto pointLight4 = new PointLight();
-    pointLight4->set_position(glm::vec3(0.0f, 0.0f, -1.0f));
+    pointLight4->set_position(glm::vec3(0.0f, 0.0f, -8.0f));
     pointLight3->_color = glm::vec3(1.0f, 1.0f, 0.0f);
     pointLight4->_k2 = 0.0f;
     pointLight4->_k1 = 0.0f;
@@ -142,6 +147,46 @@ void prepare_camera()
     camera_control->set_camera(camera);
 }
 
+void initIMGUI()
+{
+    ImGui::CreateContext();//创建上下文
+    ImGui::StyleColorsDark();
+
+    float uiScale = 1.5f;
+
+    ImGui_ImplGlfw_InitForOpenGL(APP->get_window(), true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+}
+
+void render_imgui()
+{
+    //1 开启当前imgui渲染
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
+    ImGui::NewFrame();
+
+    ImGuiIO& io = ImGui::GetIO();
+
+
+    //2 决定当前GUI上面有哪些控件 从上到下
+    ImGui::Begin("begin !");
+    ImGui::Text("color");
+    ImGui::Button("button",ImVec2{40,20});
+    ImGui::ColorEdit3("Clear Color", (float*)& clear_color);
+    ImGui::Text("FPS: %.1f", io.Framerate);
+    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+    ImGui::End();
+
+
+    //3 执行ui渲染
+    ImGui::Render();
+    int display_w, display_h;
+    glfwGetFramebufferSize(APP->get_window(), &display_w, &display_h);
+    glViewport(0, 0, display_w, display_h);//重置视口
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
 int main()
 {
 	std::cout << "OpenGL" << std::endl;
@@ -150,8 +195,8 @@ int main()
 
     prepare();
     prepare_camera();
+    initIMGUI();
 
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     APP->set_resize_callback(on_resize);
     APP->set_mouse_callback(on_mouse);
@@ -165,7 +210,9 @@ int main()
         //meshes[1]->rotate_y(0.1f);
 
         camera_control->on_update();
-        renderer->on_render(meshes,camera,dir_light,point_lights,spot_light,amb_light);
+        renderer->on_render(meshes,camera,nullptr,point_lights, nullptr,amb_light);
+        render_imgui();
+        glClearColor(clear_color.r, clear_color.g, clear_color.b, 1.0f);
 
         if (!APP->update())
             break;
