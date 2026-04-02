@@ -72,7 +72,7 @@ void prepare()
     renderer = new Renderer();
 
     //创建Geometry
-    Geometry* geometry = Geometry::create_box(1.0f);
+    Geometry* geometry = Geometry::create_box(3.0f);
     //创建一个material
     auto material_1 = new PhongMaterial();
     material_1->_shiness = 16.0f;
@@ -92,11 +92,8 @@ void prepare()
     meshes.push_back(mesh_w);
 
     spot_light = new SpotLight();
-    spot_light->set_position(mesh_w->get_position());
-
-    spot_light->_target_direction = glm::vec3(-1.0f, 0.0f, 0.0f);
-    spot_light->_inner_angle = 30.0f;
-    spot_light->_outer_angle = 45.0f;
+    spot_light->_inner_angle = 10.0f;
+    spot_light->_outer_angle = 15.0f;
 
     dir_light = new DirectionalLight();
     dir_light->_direction= glm::vec3(1.0f);
@@ -142,8 +139,8 @@ void prepare_camera()
     //camera = new OrthographicCamera(-5.0f, 5.0f, 5.0f, -5.0f, 5.0f, -5.0f,{0.0f,0.0f,7.0f});
     camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f, {0.0f,0.0f,10.0f});
 
-    camera_control = new TrackBallCameraControl();
-    //camera_control = new GameCameraControl();
+    //camera_control = new TrackBallCameraControl();
+    camera_control = new GameCameraControl();
     camera_control->set_camera(camera);
 }
 
@@ -210,7 +207,9 @@ int main()
         //meshes[1]->rotate_y(0.1f);
 
         camera_control->on_update();
-        renderer->on_render(meshes,camera,nullptr,point_lights, nullptr,amb_light);
+        spot_light->set_position(camera->_position);
+        spot_light->_target_direction = (glm::cross(camera->_up, camera->_right));
+        renderer->on_render(meshes,camera,nullptr,point_lights,spot_light,amb_light);
         render_imgui();
         glClearColor(clear_color.r, clear_color.g, clear_color.b, 1.0f);
 

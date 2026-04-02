@@ -1,4 +1,7 @@
 #version 460 core
+
+#define POINT_LIGHT_NUMBER 1
+
 out vec4 FragColor;
 
 in vec2 uv;
@@ -47,7 +50,6 @@ struct SpotLight
 };
 
 
-#define POINT_LIGHT_NUMBER 4
 uniform SpotLight spotLight;
 uniform DirectionalLight directionalLight;
 uniform PointLight pointLights[POINT_LIGHT_NUMBER];
