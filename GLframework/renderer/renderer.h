@@ -9,6 +9,7 @@
 #include "../light/point_light.h"
 #include "../light/spot_light.h"
 #include "../shader.h"
+
 class Renderer
 {
 public:
@@ -19,7 +20,7 @@ public:
 		const std::vector<Mesh*>& meshes,
 		Camera* camera,
 		DirectionalLight* dir_light,
-		PointLight* point_light,
+		const std::vector<PointLight*>& point_lights,
 		SpotLight* spot_light,
 		AmbientLight* amb_light
 	);

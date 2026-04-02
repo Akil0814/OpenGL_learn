@@ -27,7 +27,7 @@ std::vector<Mesh*> meshes{};
 
 DirectionalLight* dir_light = nullptr;
 SpotLight* spot_light = nullptr;
-PointLight* point_light = nullptr;
+std::vector<PointLight*> point_lights = {};
 
 AmbientLight* amb_light = nullptr;
 
@@ -67,7 +67,7 @@ void prepare()
     renderer = new Renderer();
 
     //创建Geometry
-    Geometry* geometry = Geometry::create_box(3.0f);
+    Geometry* geometry = Geometry::create_box(1.0f);
     //创建一个material
     auto material_1 = new PhongMaterial();
     material_1->_shiness = 16.0f;
@@ -96,12 +96,37 @@ void prepare()
     dir_light = new DirectionalLight();
     dir_light->_direction= glm::vec3(1.0f);
 
-    point_light = new PointLight();
-    point_light->set_position(glm::vec3(0.0f, 0.0f, 2.5f));
-    point_light->_specular_intensity = 0.5f;
-    point_light->_k1 = 0.07f;
-    point_light->_k2 = 0.017f;
-    point_light->_kc = 1.0f;
+    auto pointLight1 = new PointLight();
+    pointLight1->set_position(glm::vec3(1.0f, 0.0f, 0.0f));
+    pointLight1->_color = glm::vec3(1.0f, 0.0f, 0.0f);
+    pointLight1->_k2 = 0.0f;
+    pointLight1->_k1 = 0.0f;
+    pointLight1->_kc = 1.0f;
+    point_lights.push_back(pointLight1);
+
+    auto pointLight2 = new PointLight();
+    pointLight2->set_position(glm::vec3(0.0f, 1.0f, 0.0f));
+    pointLight2->_color = glm::vec3(0.0f, 1.0f, 0.0f);
+    pointLight2->_k2 = 0.0f;
+    pointLight2->_k1 = 0.0f;
+    pointLight2->_kc = 1.0f;
+    point_lights.push_back(pointLight2);
+
+    auto pointLight3 = new PointLight();
+    pointLight3->set_position(glm::vec3(0.0f, -1.0f, 0.0f));
+    pointLight3->_color = glm::vec3(0.0f, 0.0f, 1.0f);
+    pointLight3->_k2 = 0.0f;
+    pointLight3->_k1 = 0.0f;
+    pointLight3->_kc = 1.0f;
+    point_lights.push_back(pointLight3);
+
+    auto pointLight4 = new PointLight();
+    pointLight4->set_position(glm::vec3(0.0f, 0.0f, -1.0f));
+    pointLight3->_color = glm::vec3(1.0f, 1.0f, 0.0f);
+    pointLight4->_k2 = 0.0f;
+    pointLight4->_k1 = 0.0f;
+    pointLight4->_kc = 1.0f;
+    point_lights.push_back(pointLight4);
 
     amb_light = new AmbientLight();
     amb_light->_color = glm::vec3(0.1f);
@@ -140,7 +165,7 @@ int main()
         //meshes[1]->rotate_y(0.1f);
 
         camera_control->on_update();
-        renderer->on_render(meshes,camera,dir_light,point_light,spot_light,amb_light);
+        renderer->on_render(meshes,camera,dir_light,point_lights,spot_light,amb_light);
 
         if (!APP->update())
             break;

@@ -13,6 +13,8 @@ uniform vec3 targetDirection;
 
 uniform vec3 ambientColor;
 
+uniform float shiness;
+
 //相机位置
 uniform vec3 cameraPosition;
 
@@ -44,11 +46,11 @@ struct SpotLight
 	float specularIntensity;
 };
 
-uniform float shiness;
 
+#define POINT_LIGHT_NUMBER 4
 uniform SpotLight spotLight;
 uniform DirectionalLight directionalLight;
-uniform PointLight pointLight;
+uniform PointLight pointLights[POINT_LIGHT_NUMBER];
 
 //计算diffuse(漫反射)相关数据
 vec3 calculateDiffuse(vec3 lightColor, vec3 objectColor, vec3 lightDirN, vec3 normalN)
@@ -148,7 +150,11 @@ void main()
 
 	result +=calculateSpotLight(spotLight,normalN,viewDir);
 	result +=calculateDirectionalLight(directionalLight,normalN,viewDir);
-	result +=calculatePointLight(pointLight,normalN,viewDir);
+
+	for(int i=0;i<POINT_LIGHT_NUMBER;i++)
+	{
+		result +=calculatePointLight(pointLights[i],normalN,viewDir);
+	}
 
 	//环境光计算
 	vec3 ambient=ObjColor*ambientColor;

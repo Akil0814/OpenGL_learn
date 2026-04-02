@@ -2,6 +2,8 @@
 #include "../material/phong_material.h"
 #include "../material/white_material.h"
 
+#include<string>
+
 Renderer::Renderer()
 {
 	_phong_shader = new Shader("assets/shaders/phong.vert", "assets/shaders/phong.frag");
@@ -15,7 +17,7 @@ Renderer::~Renderer()
 void Renderer::on_render(const std::vector<Mesh*>& meshes,
 	Camera* camera,
 	DirectionalLight* dir_light,
-	PointLight* point_light,
+	const std::vector<PointLight*>& point_lights,
 	SpotLight* spot_light,
 	AmbientLight* amb_light)
 {
@@ -66,26 +68,43 @@ void Renderer::on_render(const std::vector<Mesh*>& meshes,
 
 			//更新光源参数
 			//探照灯
-			shader->set_vector3("spotLight.position", spot_light->get_position());
-			shader->set_vector3("spotLight.color", spot_light->_color);
-			shader->set_vector3("spotLight.targetDirection", spot_light->_target_direction);
+			if (spot_light != nullptr)
+			{
+				shader->set_vector3("spotLight.position", spot_light->get_position());
+				shader->set_vector3("spotLight.color", spot_light->_color);
+				shader->set_vector3("spotLight.targetDirection", spot_light->_target_direction);
 
-			shader->set_float("spotLight.specularIntensity", spot_light->_specular_intensity);
-			shader->set_float("spotLight.innerLine", glm::cos(glm::radians(spot_light->_inner_angle)));
-			shader->set_float("spotLight.outerLine", glm::cos(glm::radians(spot_light->_outer_angle)));
+				shader->set_float("spotLight.specularIntensity", spot_light->_specular_intensity);
+				shader->set_float("spotLight.innerLine", glm::cos(glm::radians(spot_light->_inner_angle)));
+				shader->set_float("spotLight.outerLine", glm::cos(glm::radians(spot_light->_outer_angle)));
+			}
+
 
 			//平行光
-			shader->set_vector3("directionalLight.color", dir_light->_color);
-			shader->set_vector3("directionalLight.direction", dir_light->_direction);
-			shader->set_float("directionalLight.specularIntensity", dir_light->_specular_intensity);
+			if (dir_light != nullptr)
+			{
+				shader->set_vector3("directionalLight.color", dir_light->_color);
+				shader->set_vector3("directionalLight.direction", dir_light->_direction);
+				shader->set_float("directionalLight.specularIntensity", dir_light->_specular_intensity);
+			}
 
 			//点光源
-			shader->set_vector3("pointLight.color", point_light->_color);
-			shader->set_vector3("pointLight.position", point_light->get_position());
-			shader->set_float("pointLight.specularIntensity", point_light->_specular_intensity);
-			shader->set_float("pointLight.k1", point_light->_k1);
-			shader->set_float("pointLight.k2", point_light->_k2);
-			shader->set_float("pointLight.kc", point_light->_kc);
+			for (int i = 0; i < point_lights.size(); i++)
+			{
+				auto point_light = point_lights[i];
+
+				std::string name = "pointLights[";
+				//std::string name = "pointLights[" + i;
+				name.append(std::to_string(i));
+
+				shader->set_vector3(name+"].color", point_light->_color);
+				shader->set_vector3(name+"].position", point_light->get_position());
+				shader->set_float(name+"].specularIntensity", point_light->_specular_intensity);
+				shader->set_float(name+"].k1", point_light->_k1);
+				shader->set_float(name+"].k2", point_light->_k2);
+				shader->set_float(name+"].kc", point_light->_kc);
+			}
+
 
 			//环境光
 			shader->set_vector3("ambientColor", amb_light->_color);
