@@ -18,10 +18,15 @@
 #include "GLframework/mesh.h"
 #include "GLframework/renderer/renderer.h"
 #include "GLframework/light/point_light.h"
+#include "GLframework/light/spot_light.h"
+
 
 Renderer* renderer = nullptr;
 std::vector<Mesh*> meshes{};
+
+
 DirectionalLight* dir_light = nullptr;
+SpotLight* spot_light = nullptr;
 PointLight* point_light = nullptr;
 
 AmbientLight* amb_light = nullptr;
@@ -77,13 +82,23 @@ void prepare()
 
     auto material_w = new WhiteMaterial();
     auto mesh_w = new Mesh(geometry_w, material_w);
-    mesh_w->set_position(glm::vec3(10.0, 0.0, 0.0));
+    mesh_w->set_position(glm::vec3(3.0, 0.0, 0.0));
 
     meshes.push_back(mesh_w);
 
-    // dir_light = new DirectionalLight();
+    spot_light = new SpotLight();
+    spot_light->set_position(mesh_w->get_position());
+
+    spot_light->_target_direction = glm::vec3(-1.0f, 0.0f, 0.0f);
+    spot_light->_inner_angle = 30.0f;
+    spot_light->_outer_angle = 45.0f;
+
+    dir_light = new DirectionalLight();
+    dir_light->_direction= glm::vec3(1.0f);
+
     point_light = new PointLight();
-    point_light->set_position(mesh_w->get_position());
+    point_light->set_position(glm::vec3(0.0f, 0.0f, 2.5f));
+    point_light->_specular_intensity = 0.5f;
     point_light->_k1 = 0.07f;
     point_light->_k2 = 0.017f;
     point_light->_kc = 1.0f;
@@ -111,7 +126,7 @@ int main()
     prepare();
     prepare_camera();
 
-    glClearColor(0.0f, 0.03f, 0.2f, 1.0f);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     APP->set_resize_callback(on_resize);
     APP->set_mouse_callback(on_mouse);
@@ -125,7 +140,7 @@ int main()
         //meshes[1]->rotate_y(0.1f);
 
         camera_control->on_update();
-        renderer->on_render(meshes,camera,point_light,amb_light);
+        renderer->on_render(meshes,camera,dir_light,point_light,spot_light,amb_light);
 
         if (!APP->update())
             break;

@@ -5,7 +5,7 @@ SpotLight::SpotLight()
 
 }
 
-~SpotLight::SpotLight()
+SpotLight::~SpotLight()
 {
 
 }
