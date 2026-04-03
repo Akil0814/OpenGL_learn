@@ -73,14 +73,22 @@ void prepare()
 
     //创建Geometry
     Geometry* geometry = Geometry::create_box(3.0f);
+    Geometry* sp_geometry = Geometry::create_sphere(2.0f);
+
     //创建一个material
     auto material_1 = new PhongMaterial();
     material_1->_shiness = 16.0f;
     material_1->_diffuse = new Texture("assets/textures/box.png", 0);
     material_1->_specular_mask = new Texture("assets/textures/sp_mask.png", 1);
+
     auto mesh_1 = new Mesh(geometry, material_1);
+    auto mesh_2 = new Mesh(sp_geometry, material_1);
+    mesh_2->set_position(glm::vec3(6.0f, 0.0f, 0.0f));
+
+    mesh_1->add_child(mesh_2);
 
     meshes.push_back(mesh_1);
+    meshes.push_back(mesh_2);
 
     //创建白色物体
     Geometry* geometry_w = Geometry::create_sphere(0.1f);
@@ -139,8 +147,8 @@ void prepare_camera()
     //camera = new OrthographicCamera(-5.0f, 5.0f, 5.0f, -5.0f, 5.0f, -5.0f,{0.0f,0.0f,7.0f});
     camera = new PerspectiveCamera(60.0f, ((float)APP->get_width() / (float)APP->get_height()), 0.1f, 1000.0f, {0.0f,0.0f,10.0f});
 
-    //camera_control = new TrackBallCameraControl();
-    camera_control = new GameCameraControl();
+    camera_control = new TrackBallCameraControl();
+    //camera_control = new GameCameraControl();
     camera_control->set_camera(camera);
 }
 
@@ -203,8 +211,8 @@ int main()
 
     while (true)
     {
-        //meshes[1]->rotate_x(0.01f);
-        //meshes[1]->rotate_y(0.1f);
+        meshes[1]->rotate_y(0.1f);
+        meshes[0]->rotate_y(0.1f);
 
         camera_control->on_update();
         spot_light->set_position(camera->_position);

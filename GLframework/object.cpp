@@ -33,6 +33,11 @@ void Object::set_scale(glm::vec3 scale)
 
 glm::mat4 Object::get_model_matrix() const
 {
+	glm::mat4 parent_matrix{ 1.0f };
+	if (_parent != nullptr)
+		parent_matrix = _parent->get_model_matrix();
+
+
 	//缩放->旋转->平移
 	glm::mat4 transform{ 1.0 };
 
@@ -43,12 +48,43 @@ glm::mat4 Object::get_model_matrix() const
 	transform = glm::rotate(transform, glm::radians(_angle_y), glm::vec3(0.0f, 1.0f, 0.0f));//
 	transform = glm::rotate(transform, glm::radians(_angle_z), glm::vec3(0.0f, 0.0f, 1.0f));//
 
-	transform = glm::translate(glm::mat4(1.0f), _position) * transform;
+	transform = parent_matrix * glm::translate(glm::mat4(1.0f), _position) * transform;
 
-	return transform;
+	return transform;//local matrix
 }
 
 glm::vec3 Object::get_position()const
 {
 	return _position;
+}
+
+
+void Object::set_parent(Object* obj)
+{
+	_parent = obj;
+}
+
+void Object::add_child(Object* obj)
+{
+	auto iter = std::find(_children.begin(), _children.end(), obj);
+	if (iter != _children.end())
+	{
+		std::cerr << "Duplicated Child added" << std::endl;
+		return;
+	}
+
+	_children.push_back(obj);
+
+	obj->set_parent(this);
+
+}
+
+std::vector<Object*> Object::get_children()
+{
+	return _children;
+}
+
+Object* Object::get_parent()
+{
+	return _parent;
 }
