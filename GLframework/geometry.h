@@ -6,6 +6,13 @@ class Geometry
 {
 public:
 	Geometry();
+	Geometry(
+		const std::vector<float>& positions,
+		const std::vector<float>& normals,
+		const std::vector<float>& uvs,
+		const std::vector<unsigned int>& indices
+	);
+
 	~Geometry();
 
 	static Geometry* create_box(float size);
@@ -26,5 +33,4 @@ private:
 	GLuint _EBO = { 0 };
 
 	uint32_t _indices_count = { 0 };
-
 };

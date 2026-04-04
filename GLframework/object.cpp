@@ -1,7 +1,9 @@
 #include"object.h"
 
 Object::Object()
-{ }
+{
+	_type = ObjectType::Object;
+}
 
 Object::~Object()
 { }
@@ -58,6 +60,10 @@ glm::vec3 Object::get_position()const
 	return _position;
 }
 
+ObjectType Object::get_type()
+{
+	return _type;
+}
 
 void Object::set_parent(Object* obj)
 {
@@ -87,4 +93,21 @@ std::vector<Object*> Object::get_children()
 Object* Object::get_parent()
 {
 	return _parent;
+}
+
+void Object::set_angle_x(float angle)
+{
+	_angle_x = angle;
+}
+
+void Object::set_angle_y(float angle)
+{
+	_angle_y = angle;
+
+}
+
+void Object::set_angle_z(float angle)
+{
+	_angle_z = angle;
+
 }

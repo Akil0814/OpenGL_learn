@@ -24,9 +24,11 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
-Renderer* renderer = nullptr;
-std::vector<Mesh*> meshes{};
+#include "GLframework/scene.h"
+#include "application/Assimp_loader.h"
 
+Renderer* renderer = nullptr;
+Scene* scene = nullptr;
 
 DirectionalLight* dir_light = nullptr;
 SpotLight* spot_light = nullptr;
@@ -70,34 +72,12 @@ void on_scroll(double offset)
 void prepare()
 {
     renderer = new Renderer();
+    scene = new Scene();
 
-    //创建Geometry
-    Geometry* geometry = Geometry::create_box(3.0f);
-    Geometry* sp_geometry = Geometry::create_sphere(2.0f);
-
-    //创建一个material
-    auto material_1 = new PhongMaterial();
-    material_1->_shiness = 16.0f;
-    material_1->_diffuse = new Texture("assets/textures/box.png", 0);
-    material_1->_specular_mask = new Texture("assets/textures/sp_mask.png", 1);
-
-    auto mesh_1 = new Mesh(geometry, material_1);
-    auto mesh_2 = new Mesh(sp_geometry, material_1);
-    mesh_2->set_position(glm::vec3(6.0f, 0.0f, 0.0f));
-
-    mesh_1->add_child(mesh_2);
-
-    meshes.push_back(mesh_1);
-    meshes.push_back(mesh_2);
-
-    //创建白色物体
-    Geometry* geometry_w = Geometry::create_sphere(0.1f);
-
-    auto material_w = new WhiteMaterial();
-    auto mesh_w = new Mesh(geometry_w, material_w);
-    mesh_w->set_position(glm::vec3(3.0, 0.0, 0.0));
-
-    meshes.push_back(mesh_w);
+    auto testModel = AssimpLoader::load("assets/fbx/Tpose.FBX");
+    //auto testModel = AssimpLoader::load("assets/fbx/B.fbx");
+    testModel->set_scale(glm::vec3{10.0f});
+    scene->add_child(testModel);
 
     spot_light = new SpotLight();
     spot_light->_inner_angle = 10.0f;
@@ -108,38 +88,14 @@ void prepare()
 
     auto pointLight1 = new PointLight();
     pointLight1->set_position(glm::vec3(8.0f, 0.0f, 0.0f));
-    pointLight1->_color = glm::vec3(1.0f, 0.0f, 0.0f);
+    pointLight1->_color = glm::vec3(0.0f, 0.0f, 0.0f);
     pointLight1->_k2 = 0.0f;
     pointLight1->_k1 = 0.0f;
     pointLight1->_kc = 1.0f;
     point_lights.push_back(pointLight1);
 
-    auto pointLight2 = new PointLight();
-    pointLight2->set_position(glm::vec3(0.0f, 8.0f, 0.0f));
-    pointLight2->_color = glm::vec3(0.0f, 1.0f, 0.0f);
-    pointLight2->_k2 = 0.0f;
-    pointLight2->_k1 = 0.0f;
-    pointLight2->_kc = 1.0f;
-    point_lights.push_back(pointLight2);
-
-    auto pointLight3 = new PointLight();
-    pointLight3->set_position(glm::vec3(0.0f, -8.0f, 0.0f));
-    pointLight3->_color = glm::vec3(0.0f, 0.0f, 1.0f);
-    pointLight3->_k2 = 0.0f;
-    pointLight3->_k1 = 0.0f;
-    pointLight3->_kc = 1.0f;
-    point_lights.push_back(pointLight3);
-
-    auto pointLight4 = new PointLight();
-    pointLight4->set_position(glm::vec3(0.0f, 0.0f, -8.0f));
-    pointLight3->_color = glm::vec3(1.0f, 1.0f, 0.0f);
-    pointLight4->_k2 = 0.0f;
-    pointLight4->_k1 = 0.0f;
-    pointLight4->_kc = 1.0f;
-    point_lights.push_back(pointLight4);
-
     amb_light = new AmbientLight();
-    amb_light->_color = glm::vec3(0.1f);
+    amb_light->_color = glm::vec3(1.0f);
 }
 
 void prepare_camera()
@@ -211,13 +167,11 @@ int main()
 
     while (true)
     {
-        meshes[1]->rotate_y(0.1f);
-        meshes[0]->rotate_y(0.1f);
 
         camera_control->on_update();
-        spot_light->set_position(camera->_position);
-        spot_light->_target_direction = (glm::cross(camera->_up, camera->_right));
-        renderer->on_render(meshes,camera,nullptr,point_lights,spot_light,amb_light);
+        //spot_light->set_position(camera->_position);
+        //spot_light->_target_direction = (glm::cross(camera->_up, camera->_right));
+        renderer->on_render(scene,camera,nullptr,point_lights,nullptr,amb_light);
         render_imgui();
         glClearColor(clear_color.r, clear_color.g, clear_color.b, 1.0f);
 

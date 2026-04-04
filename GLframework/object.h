@@ -1,6 +1,13 @@
 #pragma once
 #include "core.h"
 
+enum class ObjectType
+{
+	Object,
+	Mesh,
+	Scene
+};
+
 class Object
 {
 public:
@@ -12,6 +19,10 @@ public:
 	void rotate_y(float angle);
 	void rotate_z(float angle);
 
+	void set_angle_x(float angle);
+	void set_angle_y(float angle);
+	void set_angle_z(float angle);
+
 	void set_position(glm::vec3 pos);
 	void set_scale(glm::vec3 scale);
 
@@ -22,6 +33,8 @@ public:
 	void add_child(Object* obj);
 	std::vector<Object*> get_children();
 	Object* get_parent();
+
+	ObjectType get_type();
 
 protected:
 	glm::vec3 _position{ 0.0f };
@@ -35,4 +48,6 @@ protected:
 	//父子关系
 	std::vector<Object*> _children{};
 	Object* _parent = nullptr;
+
+	ObjectType _type;
 };

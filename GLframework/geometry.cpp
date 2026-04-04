@@ -6,6 +6,50 @@ Geometry::Geometry()
 
 }
 
+Geometry::Geometry(
+	const std::vector<float>& positions,
+	const std::vector<float>& normals,
+	const std::vector<float>& uvs,
+	const std::vector<unsigned int>& indices
+)
+{
+	_indices_count = indices.size();
+
+	//生成VBO与VAO
+	// 先创建并绑定 VAO
+	glGenVertexArrays(1, &_VAO);
+	glBindVertexArray(_VAO);
+
+	// 创建 position VBO
+	glGenBuffers(1, &_pos_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _pos_VBO);
+	glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(GLfloat), positions.data(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+	// 创建 uv VBO
+	glGenBuffers(1, &_uv_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _uv_VBO);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size() * sizeof(GLfloat), uvs.data(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+
+	// 创建 normal VBO
+	glGenBuffers(1, &_normal_VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, _normal_VBO);
+	glBufferData(GL_ARRAY_BUFFER, normals.size() * sizeof(GLfloat), normals.data(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+	// 创建 EBO
+	glGenBuffers(1, &_EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
+
+	glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
 Geometry::~Geometry()
 {
 	if(_VAO!=0)
