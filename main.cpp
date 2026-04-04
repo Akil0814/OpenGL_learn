@@ -74,7 +74,8 @@ void prepare()
     renderer = new Renderer();
     scene = new Scene();
 
-    auto testModel = AssimpLoader::load("assets/fbx/Tpose.FBX");
+    auto testModel = AssimpLoader::load("assets/fbx/miyabi/Tpose.FBX");
+    //auto testModel = AssimpLoader::load("assets/fbx/Luxiya/R1LuxiyaMd010011.fbx");
     //auto testModel = AssimpLoader::load("assets/fbx/B.fbx");
     testModel->set_scale(glm::vec3{10.0f});
     scene->add_child(testModel);
@@ -82,6 +83,7 @@ void prepare()
     spot_light = new SpotLight();
     spot_light->_inner_angle = 10.0f;
     spot_light->_outer_angle = 15.0f;
+    spot_light->_specular_intensity = 0.3f;
 
     dir_light = new DirectionalLight();
     dir_light->_direction= glm::vec3(1.0f);
@@ -169,9 +171,9 @@ int main()
     {
 
         camera_control->on_update();
-        //spot_light->set_position(camera->_position);
-        //spot_light->_target_direction = (glm::cross(camera->_up, camera->_right));
-        renderer->on_render(scene,camera,nullptr,point_lights,nullptr,amb_light);
+        spot_light->set_position(camera->_position);
+        spot_light->_target_direction = (glm::cross(camera->_up, camera->_right));
+        renderer->on_render(scene, camera, nullptr, point_lights,nullptr, amb_light);
         render_imgui();
         glClearColor(clear_color.r, clear_color.g, clear_color.b, 1.0f);
 

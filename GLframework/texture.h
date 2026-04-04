@@ -2,10 +2,19 @@
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include <string>
+#include <map>
 
 class Texture
 {
 public:
+	static Texture* create_texture(const std::string& path, unsigned int unit);
+	static Texture* create_texture_from_memory(
+		const std::string& path, unsigned int unit,
+		unsigned char* data_in,
+		uint32_t width_in,
+		uint32_t height_in
+	);
+
 	Texture(const std::string& path, unsigned int unit);
 	Texture(
 		unsigned char* data_in,
@@ -27,4 +36,7 @@ private:
 	int _width = { 0 };
 	int _height = { 0 };
 	unsigned int _unit = { 0 };
+
+	//静态
+	static std::map<std::string, Texture*>_texture_cache;
 };

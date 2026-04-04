@@ -5,6 +5,37 @@
 
 #include<iostream>
 
+std::map<std::string, Texture*> Texture::_texture_cache{};
+
+Texture* Texture::create_texture(const std::string& path, unsigned int unit)
+{
+    auto iter = _texture_cache.find(path);
+    if (iter != _texture_cache.end())
+        return iter->second;
+
+    auto texture = new Texture(path, unit);
+    _texture_cache[path] = texture;
+
+    return texture;
+}
+
+Texture* Texture::create_texture_from_memory(
+    const std::string& path, unsigned int unit,
+    unsigned char* data_in,
+    uint32_t width_in,
+    uint32_t height_in
+)
+{
+    auto iter = _texture_cache.find(path);
+    if (iter != _texture_cache.end())
+        return iter->second;
+
+    auto texture = new Texture(data_in,width_in,height_in,unit);
+    _texture_cache[path] = texture;
+
+    return texture;
+}
+
 Texture::Texture(const std::string& path, unsigned int unit)
 {
     _unit = unit;

@@ -4,6 +4,11 @@
 
 Object* AssimpLoader::load(const std::string& path)
 {
+	//拿出模型所在目录
+	std::size_t last_index = path.find_last_of("//");
+	std::string root_path = path.substr(0, last_index + 1);
+	std::cout << root_path << std::endl;
+
 	Object* root_node = new Object();
 
 	Assimp::Importer importer;
@@ -17,12 +22,13 @@ Object* AssimpLoader::load(const std::string& path)
 		return nullptr;
 	}
 
-	process_node(scene->mRootNode,root_node,scene);
+	process_node(scene->mRootNode,root_node,scene,root_path);
 
 	return root_node;
 }
 
-void AssimpLoader::process_node(aiNode* ainode, Object* parent, const aiScene* scene)
+void AssimpLoader::process_node(aiNode* ainode, Object* parent, 
+	const aiScene* scene, const std::string& root_path)
 {
 	Object* node = new Object();
 	parent->add_child(node);
@@ -42,17 +48,18 @@ void AssimpLoader::process_node(aiNode* ainode, Object* parent, const aiScene* s
 	{
 		int mesh_ID = ainode->mMeshes[i];
 		aiMesh* ai_mesh = scene->mMeshes[mesh_ID];
-		Mesh* mesh = process_mesh(ai_mesh);
+		Mesh* mesh = process_mesh(ai_mesh,scene, root_path);
 		node->add_child(mesh);
 	}
 
 	for (int i = 0; i < ainode->mNumChildren; ++i)
 	{
-		process_node(ainode->mChildren[i],node,scene);
+		process_node(ainode->mChildren[i],node,scene, root_path);
 	}
 }
 
-Mesh* AssimpLoader::process_mesh(aiMesh* aimesh)
+Mesh* AssimpLoader::process_mesh(aiMesh* aimesh, const aiScene* scene,
+	const std::string& root_path)
 {
 	std::vector<float> positions;
 	std::vector<float> normals;
@@ -72,9 +79,16 @@ Mesh* AssimpLoader::process_mesh(aiMesh* aimesh)
 		positions.push_back(aimesh->mVertices[i].z);
 
 		//顶点法线
-		normals.push_back(aimesh->mNormals[i].x);
-		normals.push_back(aimesh->mNormals[i].y);
-		normals.push_back(aimesh->mNormals[i].z);
+		if (aimesh->HasNormals()) {
+			normals.push_back(aimesh->mNormals[i].x);
+			normals.push_back(aimesh->mNormals[i].y);
+			normals.push_back(aimesh->mNormals[i].z);
+		}
+		else {
+			normals.push_back(0.0f);
+			normals.push_back(0.0f);
+			normals.push_back(0.0f);
+		}
 
 		//顶点uv
 		//关注其第0套uv，一般情况下是贴图uv
@@ -91,12 +105,18 @@ Mesh* AssimpLoader::process_mesh(aiMesh* aimesh)
 
 	}
 
-
-	indices.reserve(aimesh->mNumFaces * 3);
-	//解析索引值
-	for (int i = 0; i < aimesh->mNumFaces; ++i)
+	size_t total_index_count = 0;
+	for (unsigned int i = 0; i < aimesh->mNumFaces; ++i)
 	{
-		aiFace face = aimesh->mFaces[i];
+		total_index_count += aimesh->mFaces[i].mNumIndices;
+	}
+	indices.reserve(total_index_count);
+	std::cout << "number of faces:" << total_index_count << std::endl;
+
+	//解析索引值
+	for (unsigned int i = 0; i < aimesh->mNumFaces; ++i)
+	{
+		const aiFace& face = aimesh->mFaces[i];
 		for (int j = 0; j < face.mNumIndices; ++j)
 		{
 			indices.push_back(face.mIndices[j]);
@@ -105,12 +125,81 @@ Mesh* AssimpLoader::process_mesh(aiMesh* aimesh)
 
 	auto geometry = new Geometry(positions, normals, uvs, indices);
 	auto material = new PhongMaterial();
-	material->_diffuse = new Texture("assets/textures/Unagi_Body_D.png", 0);
-	//material->_diffuse = new Texture("assets/textures/Unagi_Face_D.png", 1);
-	//material->_diffuse = new Texture("assets/textures/Unagi_Hair_D.png", 0);
+
+	if (aimesh->mMaterialIndex >= 0)
+	{
+		Texture* texture = nullptr;
+		aiMaterial* ai_mat = scene->mMaterials[aimesh->mMaterialIndex];
+		texture = process_texture(ai_mat, aiTextureType_DIFFUSE, scene, root_path);
+		if (texture != nullptr)
+			material->_diffuse = texture;
+		else
+			material->_diffuse = Texture::create_texture("assets/textures/defaultTexture.jpg", 0);
+
+		//std::cout << "---------------------------------------------------------------" << std::endl;
+		//std::cout << "diffuse count: "
+		//	<< ai_mat->GetTextureCount(aiTextureType_DIFFUSE) << '\n';
+		//std::cout << "specular count: "
+		//	<< ai_mat->GetTextureCount(aiTextureType_SPECULAR) << '\n';
+		//std::cout << "normal count: "
+		//	<< ai_mat->GetTextureCount(aiTextureType_NORMALS) << '\n';
+		//std::cout << "height count: "
+		//	<< ai_mat->GetTextureCount(aiTextureType_HEIGHT) << '\n';
+		//std::cout << "base color count: "
+		//	<< ai_mat->GetTextureCount(aiTextureType_BASE_COLOR) << '\n';
+		//std::cout << "metalness count: "
+		//	<< ai_mat->GetTextureCount(aiTextureType_METALNESS) << '\n';
+		//std::cout << "roughness count: "
+		//	<< ai_mat->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS) << '\n';
+		//std::cout << "mesh material index: " << aimesh->mMaterialIndex << '\n';
+
+
+	}
+	else
+	{
+		material->_diffuse = Texture::create_texture("assets/textures/defaultTexture.jpg",0);
+	}
 
 
 	return new Mesh(geometry,material);
+}
+
+Texture* AssimpLoader::process_texture(
+	const aiMaterial* ai_mat,
+	const aiTextureType& type,
+	const aiScene* scene,
+	const std::string& root_path
+)
+{
+	Texture* texture = nullptr;
+
+	//获取图片读取路径
+	aiString aipath;
+	ai_mat->Get(AI_MATKEY_TEXTURE(type, 0), aipath);
+
+	if (aipath.Empty())
+		return nullptr;
+
+	//判读是否是嵌入图片
+	const aiTexture* aitexture = scene->GetEmbeddedTexture(aipath.C_Str());
+	if (aitexture)
+	{
+		std::cout << "have path included" << std::endl;
+		//纹理图片是内嵌的-获取图片信息
+		unsigned char* data_in = reinterpret_cast<unsigned char*>(aitexture->pcData);
+		uint32_t width_in = aitexture->mWidth;//通常情况下，代表了整张图片大小
+		uint32_t height_in = aitexture->mHeight;
+		texture = Texture::create_texture_from_memory(aipath.C_Str(), 0, data_in, width_in, height_in);
+	}
+	else
+	{
+		std::cout << "don't have path included" << std::endl;
+		std::string full_path = root_path + aipath.C_Str();
+		texture = Texture::create_texture(full_path, 0);
+		std::cout << full_path << std::endl;
+	}
+
+	return texture;
 }
 
 glm::mat4 AssimpLoader::get_mat4f(aiMatrix4x4 value)
