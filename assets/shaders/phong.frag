@@ -77,8 +77,7 @@ vec3 calculateSpecular(vec3 lightColor, vec3 lightDirN, vec3 normalN, vec3 viewD
 	//3 控制光斑大小
 	specular = pow(specular,shiness);
 
-	//float specularMask= texture(specular_mask_sampler,uv).r;
-	//vec3 specularColor=spotLight.color*specular*flag*spotLight.specularIntensity*specularMask;
+	float specularMask= texture(specular_mask_sampler,uv).r;
 
 	//4 计算最终颜色
 	vec3 specularColor=lightColor*specular*flag*intensity;

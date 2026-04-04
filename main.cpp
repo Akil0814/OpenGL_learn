@@ -75,10 +75,27 @@ void prepare()
     scene = new Scene();
 
     auto testModel = AssimpLoader::load("assets/fbx/miyabi/Tpose.FBX");
-    //auto testModel = AssimpLoader::load("assets/fbx/Luxiya/R1LuxiyaMd010011.fbx");
-    //auto testModel = AssimpLoader::load("assets/fbx/B.fbx");
-    testModel->set_scale(glm::vec3{10.0f});
+    //auto testModel = AssimpLoader::load("assets/fbx/Evelyn.glb");
+    auto testModel_0 = AssimpLoader::load("assets/fbx/Idle.fbx");
+    auto testModel_1 = AssimpLoader::load("assets/fbx/TPOSS.fbx");
+    auto testModel_2 = AssimpLoader::load("assets/fbx/YiXuan/YiXuan.fbx");
+
+    testModel->set_scale(glm::vec3{ 5.0f });
+    testModel->set_position(glm::vec3{ 10.0f,0.0f,0.0f });
+    testModel->rotate_x(180);
     scene->add_child(testModel);
+
+    testModel_0->set_scale(glm::vec3{0.05f});
+    scene->add_child(testModel_0);
+
+    testModel_1->set_scale(glm::vec3{ 0.05f });
+    testModel_1->set_position(glm::vec3{ 5.0f,0.0f,0.0f });
+    scene->add_child(testModel_1);
+
+    testModel_2->set_scale(glm::vec3{ 5.0f });
+    testModel_2->set_position(glm::vec3{ -5.0f,0.0f,0.0f });
+    testModel_2->rotate_x(180);
+    scene->add_child(testModel_2);
 
     spot_light = new SpotLight();
     spot_light->_inner_angle = 10.0f;
@@ -90,7 +107,7 @@ void prepare()
 
     auto pointLight1 = new PointLight();
     pointLight1->set_position(glm::vec3(8.0f, 0.0f, 0.0f));
-    pointLight1->_color = glm::vec3(0.0f, 0.0f, 0.0f);
+    pointLight1->_color = glm::vec3(0.5f, 0.5f, 0.5f);
     pointLight1->_k2 = 0.0f;
     pointLight1->_k1 = 0.0f;
     pointLight1->_kc = 1.0f;

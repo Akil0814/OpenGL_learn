@@ -129,31 +129,49 @@ Mesh* AssimpLoader::process_mesh(aiMesh* aimesh, const aiScene* scene,
 	if (aimesh->mMaterialIndex >= 0)
 	{
 		Texture* texture = nullptr;
+		Texture* specular = nullptr;
 		aiMaterial* ai_mat = scene->mMaterials[aimesh->mMaterialIndex];
+
+std::cout << "---------------------------------------------------------------" << std::endl;
+std::cout << "diffuse count: "
+	<< ai_mat->GetTextureCount(aiTextureType_DIFFUSE) << '\n';
+std::cout << "specular count: "
+	<< ai_mat->GetTextureCount(aiTextureType_SPECULAR) << '\n';
+std::cout << "normal count: "
+	<< ai_mat->GetTextureCount(aiTextureType_NORMALS) << '\n';
+std::cout << "height count: "
+	<< ai_mat->GetTextureCount(aiTextureType_HEIGHT) << '\n';
+std::cout << "base color count: "
+	<< ai_mat->GetTextureCount(aiTextureType_BASE_COLOR) << '\n';
+std::cout << "metalness count: "
+	<< ai_mat->GetTextureCount(aiTextureType_METALNESS) << '\n';
+std::cout << "roughness count: "
+	<< ai_mat->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS) << '\n';
+std::cout << "mesh material index: " << aimesh->mMaterialIndex << '\n';
+
+		//读取DIFFUSE贴图
+		std::cout << "DIFFUSE" << std::endl;
 		texture = process_texture(ai_mat, aiTextureType_DIFFUSE, scene, root_path);
 		if (texture != nullptr)
+		{
+			std::cout << "have DIFFUSE" << std::endl;
+			texture->set_unit(0);
 			material->_diffuse = texture;
+		}
 		else
 			material->_diffuse = Texture::create_texture("assets/textures/defaultTexture.jpg", 0);
 
-		//std::cout << "---------------------------------------------------------------" << std::endl;
-		//std::cout << "diffuse count: "
-		//	<< ai_mat->GetTextureCount(aiTextureType_DIFFUSE) << '\n';
-		//std::cout << "specular count: "
-		//	<< ai_mat->GetTextureCount(aiTextureType_SPECULAR) << '\n';
-		//std::cout << "normal count: "
-		//	<< ai_mat->GetTextureCount(aiTextureType_NORMALS) << '\n';
-		//std::cout << "height count: "
-		//	<< ai_mat->GetTextureCount(aiTextureType_HEIGHT) << '\n';
-		//std::cout << "base color count: "
-		//	<< ai_mat->GetTextureCount(aiTextureType_BASE_COLOR) << '\n';
-		//std::cout << "metalness count: "
-		//	<< ai_mat->GetTextureCount(aiTextureType_METALNESS) << '\n';
-		//std::cout << "roughness count: "
-		//	<< ai_mat->GetTextureCount(aiTextureType_DIFFUSE_ROUGHNESS) << '\n';
-		//std::cout << "mesh material index: " << aimesh->mMaterialIndex << '\n';
-
-
+		//读取SPECULAR贴图
+		std::cout << "SPECULAR" << std::endl;
+		specular = process_texture(ai_mat, aiTextureType_SPECULAR, scene, root_path);
+		if (specular != nullptr)
+		{
+			std::cout << "Have SPECULAR" << std::endl;
+			specular->set_unit(1);
+			material->_specular_mask = specular;
+		}
+		else
+			material->_specular_mask = Texture::create_texture("assets/textures/defaultTexture.jpg", 1);
 	}
 	else
 	{
@@ -178,7 +196,13 @@ Texture* AssimpLoader::process_texture(
 	ai_mat->Get(AI_MATKEY_TEXTURE(type, 0), aipath);
 
 	if (aipath.Empty())
+	{
+		std::cout << "path==empty()" << std::endl;
 		return nullptr;
+	}
+
+	std::cout << "root path: " << root_path << std::endl;
+	std::cout << "aipath: " << aipath.C_Str() << std::endl;
 
 	//判读是否是嵌入图片
 	const aiTexture* aitexture = scene->GetEmbeddedTexture(aipath.C_Str());
@@ -195,6 +219,7 @@ Texture* AssimpLoader::process_texture(
 	{
 		std::cout << "don't have path included" << std::endl;
 		std::string full_path = root_path + aipath.C_Str();
+		std::replace(full_path.begin(), full_path.end(), '\\', '/');
 		texture = Texture::create_texture(full_path, 0);
 		std::cout << full_path << std::endl;
 	}
