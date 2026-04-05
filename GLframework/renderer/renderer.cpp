@@ -24,6 +24,7 @@ void Renderer::on_render(Scene* scene,
 	//设置当前帧绘制时，OpenGL的必要状态机参数
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	glDepthMask(GL_TRUE);
 
 	//清理颜色缓存于深度缓存
 	GL_CALL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -67,6 +68,25 @@ void Renderer::render_object(
 		auto mesh = (Mesh*)object;
 		auto geometry = mesh->_geometry;
 		auto material = mesh->_material;
+
+		//设置渲染状态
+		if (material->_depth_test)
+		{
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(material->_depth_func);
+
+		}
+		else
+			glDisable(GL_DEPTH_TEST);
+
+
+		if(material->_depth_write)
+			glDepthMask(GL_TRUE);
+		else
+			glDepthMask(GL_FALSE);
+
+
+
 
 		//决定使用哪个shader
 		Shader* shader = pick_shader(material->_type);

@@ -74,28 +74,48 @@ void prepare()
     renderer = new Renderer();
     scene = new Scene();
 
-    auto testModel = AssimpLoader::load("assets/fbx/miyabi/Tpose.FBX");
+    //auto testModel = AssimpLoader::load("assets/fbx/miyabi/Tpose.FBX");
     //auto testModel = AssimpLoader::load("assets/fbx/Evelyn.glb");
-    auto testModel_0 = AssimpLoader::load("assets/fbx/Idle.fbx");
-    auto testModel_1 = AssimpLoader::load("assets/fbx/TPOSS.fbx");
-    auto testModel_2 = AssimpLoader::load("assets/fbx/YiXuan/YiXuan.fbx");
+    //auto testModel_0 = AssimpLoader::load("assets/fbx/Idle.fbx");
+    //auto testModel_1 = AssimpLoader::load("assets/fbx/TPOSS.fbx");
+    //auto testModel_2 = AssimpLoader::load("assets/fbx/YiXuan/YiXuan.fbx");
 
-    testModel->set_scale(glm::vec3{ 5.0f });
-    testModel->set_position(glm::vec3{ 10.0f,0.0f,0.0f });
-    testModel->rotate_x(180);
-    scene->add_child(testModel);
+    //testModel->set_scale(glm::vec3{ 5.0f });
+    //testModel->set_position(glm::vec3{ 0.0f,0.0f,0.0f });
+    //testModel->rotate_x(180);
+    //scene->add_child(testModel);
 
-    testModel_0->set_scale(glm::vec3{0.05f});
-    scene->add_child(testModel_0);
+    //testModel_0->set_scale(glm::vec3{0.05f});
+    //scene->add_child(testModel_0);
 
-    testModel_1->set_scale(glm::vec3{ 0.05f });
-    testModel_1->set_position(glm::vec3{ 5.0f,0.0f,0.0f });
-    scene->add_child(testModel_1);
+    //testModel_1->set_scale(glm::vec3{ 0.05f });
+    //testModel_1->set_position(glm::vec3{ 5.0f,0.0f,0.0f });
+    //scene->add_child(testModel_1);
 
-    testModel_2->set_scale(glm::vec3{ 5.0f });
-    testModel_2->set_position(glm::vec3{ -5.0f,0.0f,0.0f });
-    testModel_2->rotate_x(180);
-    scene->add_child(testModel_2);
+    //testModel_2->set_scale(glm::vec3{ 5.0f });
+    //testModel_2->set_position(glm::vec3{ -5.0f,0.0f,0.0f });
+    //testModel_2->rotate_x(180);
+    //scene->add_child(testModel_2);
+
+    auto geometry = Geometry::create_square(3.0f);
+    auto material_A = new PhongMaterial();
+    material_A->_diffuse = new Texture("assets/textures/Arcueid_morning.png",0);
+    material_A->_depth_write = false;
+    auto meshA = new Mesh(geometry, material_A);
+
+    auto material_B = new PhongMaterial();
+    material_B->_diffuse = new Texture("assets/textures/box.png", 0);
+    auto meshB = new Mesh(geometry, material_B);
+    meshB->set_position(glm::vec3{ 2.0f,0.0f,3.0f });
+
+    auto material_C = new PhongMaterial();
+    material_C->_diffuse = new Texture("assets/textures/wall.jpg", 0);
+    auto meshC = new Mesh(geometry, material_C);
+    meshC->set_position(glm::vec3{ 4.0f,0.0f,-3.0f });
+
+    scene->add_child(meshA);
+    scene->add_child(meshB);
+    scene->add_child(meshC);
 
     spot_light = new SpotLight();
     spot_light->_inner_angle = 10.0f;
@@ -107,7 +127,7 @@ void prepare()
 
     auto pointLight1 = new PointLight();
     pointLight1->set_position(glm::vec3(8.0f, 0.0f, 0.0f));
-    pointLight1->_color = glm::vec3(0.5f, 0.5f, 0.5f);
+    pointLight1->_color = glm::vec3(0.0f, 0.0f, 0.0f);
     pointLight1->_k2 = 0.0f;
     pointLight1->_k1 = 0.0f;
     pointLight1->_kc = 1.0f;
